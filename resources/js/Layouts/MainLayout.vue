@@ -1,0 +1,105 @@
+<script setup>
+import { ref, onMounted } from 'vue';
+import { Link } from '@inertiajs/vue3';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+import AuthModal from '@/Components/AuthModal.vue';
+import { ShoppingCartIcon } from '@heroicons/vue/24/outline';
+
+const isMobileMenuOpen = ref(false);
+const isAuthOpen = ref(false);
+
+onMounted(() => {
+    AOS.init({
+        duration: 800,
+        once: true,
+    });
+});
+</script>
+
+<template>
+    <div class="bg-zinc-50 font-sans text-zinc-500">
+        <header class="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm shadow-sm z-50">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-20">
+                    <Link href="/" class="text-2xl font-bold text-zinc-900">
+                        Vallera
+                    </Link>
+
+                    <nav class="hidden md:flex items-center space-x-10 text-sm font-medium">
+                        <Link :href="route('home')" :class="{'text-primary-600' : $page.url === '/'}">Home</Link>
+                        <Link :href="route('products.index')" :class="{'text-primary-600' : $page.url.startsWith('/products')}">Products</Link>
+                        <Link :href="route('about')" :class="{'text-primary-600' : $page.url.startsWith('/about')}">About</Link>
+                        <Link :href="route('contact')" :class="{'text-primary-600' : $page.url.startsWith('/contact')}">Contact</Link>
+                    </nav>
+
+                    <div class="hidden md:flex items-center gap-4">
+                        <button @click="isAuthOpen = true" class="text-sm font-medium text-zinc-600 hover:text-primary-600 transition-colors">Login</button>
+                        <Link :href="route('cart.index')" class="relative text-zinc-600 hover:text-primary-600 transition-colors">
+                             <ShoppingCartIcon class="w-6 h-6" />
+                        </Link>
+                    </div>
+                    
+                    <div class="md:hidden flex items-center">
+                        <button @click="isMobileMenuOpen = !isMobileMenuOpen" class="text-zinc-600">
+                             <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+             <div v-if="isMobileMenuOpen" class="md:hidden bg-white border-t border-zinc-100">
+                <nav class="flex flex-col space-y-1 p-4">
+                    <Link :href="route('home')" class="px-4 py-2 rounded-md font-medium">Home</Link>
+                    <Link :href="route('products.index')" class="px-4 py-2 rounded-md font-medium">Products</Link>
+                    <Link :href="route('about')" class="px-4 py-2 rounded-md font-medium">About</Link>
+                    <Link :href="route('contact')" class="px-4 py-2 rounded-md font-medium">Contact</Link>
+                    <button @click="isAuthOpen = true" class="w-full text-left px-4 py-3 mt-2 rounded-md font-medium bg-zinc-100 hover:bg-zinc-200">Login</button>
+                    <Link :href="route('cart.index')" class="w-full text-left px-4 py-3 mt-1 rounded-md font-medium bg-zinc-100 hover:bg-zinc-200">My Cart</Link>
+                </nav>
+            </div>
+        </header>
+
+        <main class="min-h-screen pt-20">
+            <slot />
+        </main>
+
+        <footer class="bg-zinc-900 text-zinc-300">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+                    <div class="sm:col-span-2 md:col-span-1">
+                        <h2 class="text-3xl font-bold text-white">Vallera</h2>
+                        <p class="mt-4 text-sm text-zinc-400">Crafting comfort and style for the modern home, designed for life.</p>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-white tracking-wider">Quick Links</h3>
+                        <ul class="mt-4 space-y-3 text-sm">
+                            <li><Link :href="route('products.index')" class="hover:text-primary-500 transition-colors">Shop</Link></li>
+                            <li><Link :href="route('about')" class="hover:text-primary-500 transition-colors">About Us</Link></li>
+                            <li><Link :href="route('contact')" class="hover:text-primary-500 transition-colors">FAQ</Link></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-white tracking-wider">Contact</h3>
+                        <ul class="mt-4 space-y-3 text-sm text-zinc-400">
+                           <li>hello@vallera.ph</li>
+                           <li>Philippines</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-white tracking-wider">Stay Updated</h3>
+                        <p class="mt-4 text-sm">Join our newsletter for exclusive deals.</p>
+                        <div class="mt-4 flex">
+                            <input type="email" placeholder="Your email" class="bg-zinc-800 border-zinc-700 text-white w-full rounded-l-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                            <button class="bg-primary-600 hover:bg-primary-700 text-white font-semibold px-4 rounded-r-md transition-colors flex-shrink-0">Subscribe</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-16 pt-8 border-t border-zinc-800 text-center text-sm text-zinc-500">
+                    <p>&copy; 2025 Vallera. Developed by John Dominic Gonzales.</p>
+                </div>
+            </div>
+        </footer>
+        
+        <AuthModal :show="isAuthOpen" @close="isAuthOpen = false" />
+    </div>
+</template>
