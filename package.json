@@ -21,6 +21,7 @@
         "vue": "^3.4.0"
     },
     "dependencies": {
+        "@fontsource/figtree": "^5.2.10",
         "@heroicons/vue": "^2.2.0",
         "aos": "^2.3.4"
     }

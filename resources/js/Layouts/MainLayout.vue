@@ -1,13 +1,51 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { ref, onMounted, computed } from 'vue';
+import { Link, usePage, router } from '@inertiajs/vue3';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import AuthModal from '@/Components/AuthModal.vue';
+import ToastNotification from '@/Components/ToastNotification.vue';
+import UserDropdown from '@/Components/UserDropdown.vue';
 import { ShoppingCartIcon } from '@heroicons/vue/24/outline';
 
+const page = usePage();
 const isMobileMenuOpen = ref(false);
 const isAuthOpen = ref(false);
+
+const toast = ref({
+    show: false,
+    message: '',
+    type: 'success'
+});
+
+const user = computed(() => page.props.auth?.user);
+const isAuthenticated = computed(() => !!user.value);
+const cartCount = computed(() => page.props.cartCount || 0);
+
+function showToast(message, type = 'success') {
+    toast.value = { show: true, message, type };
+}
+
+function hideToast() {
+    toast.value.show = false;
+}
+
+function handleAuthSuccess(message) {
+    showToast(message, 'success');
+}
+
+function handleLogoutSuccess() {
+    showToast('Signed out successfully!', 'info');
+}
+
+function handleMobileLogout() {
+    router.post('/logout', {}, {
+        onSuccess: () => {
+            isMobileMenuOpen.value = false;
+            handleLogoutSuccess();
+        }
+    });
+}
 
 onMounted(() => {
     AOS.init({
@@ -19,6 +57,13 @@ onMounted(() => {
 
 <template>
     <div class="bg-zinc-50 font-sans text-zinc-500">
+        <ToastNotification
+            :show="toast.show"
+            :message="toast.message"
+            :type="toast.type"
+            @close="hideToast"
+        />
+
         <header class="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm shadow-sm z-50">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-20">
@@ -34,12 +79,20 @@ onMounted(() => {
                     </nav>
 
                     <div class="hidden md:flex items-center gap-4">
-                        <button @click="isAuthOpen = true" class="text-sm font-medium text-zinc-600 hover:text-primary-600 transition-colors">Login</button>
+                        <template v-if="isAuthenticated">
+                            <UserDropdown :user="user" @logout-success="handleLogoutSuccess" />
+                        </template>
+                        <template v-else>
+                            <button @click="isAuthOpen = true" class="text-sm font-medium text-zinc-600 hover:text-primary-600 transition-colors">Login</button>
+                        </template>
                         <Link :href="route('cart.index')" class="relative text-zinc-600 hover:text-primary-600 transition-colors">
                              <ShoppingCartIcon class="w-6 h-6" />
+                             <span v-if="cartCount > 0" class="absolute -top-2 -right-2 bg-primary-600 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">
+                                 {{ cartCount > 99 ? '99+' : cartCount }}
+                             </span>
                         </Link>
                     </div>
-                    
+
                     <div class="md:hidden flex items-center">
                         <button @click="isMobileMenuOpen = !isMobileMenuOpen" class="text-zinc-600">
                              <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
@@ -53,7 +106,15 @@ onMounted(() => {
                     <Link :href="route('products.index')" class="px-4 py-2 rounded-md font-medium">Products</Link>
                     <Link :href="route('about')" class="px-4 py-2 rounded-md font-medium">About</Link>
                     <Link :href="route('contact')" class="px-4 py-2 rounded-md font-medium">Contact</Link>
-                    <button @click="isAuthOpen = true" class="w-full text-left px-4 py-3 mt-2 rounded-md font-medium bg-zinc-100 hover:bg-zinc-200">Login</button>
+                    <template v-if="isAuthenticated">
+                        <div class="px-4 py-2 text-sm text-zinc-500">Signed in as {{ user.name }}</div>
+                        <Link v-if="user.is_admin" :href="route('admin.dashboard')" class="w-full text-left px-4 py-3 mt-1 rounded-md font-medium bg-zinc-100 hover:bg-zinc-200">Admin Dashboard</Link>
+                        <Link :href="route('profile.edit')" class="w-full text-left px-4 py-3 mt-1 rounded-md font-medium bg-zinc-100 hover:bg-zinc-200">Settings</Link>
+                        <button @click="handleMobileLogout" class="w-full text-left px-4 py-3 mt-1 rounded-md font-medium bg-red-50 text-red-600 hover:bg-red-100">Sign Out</button>
+                    </template>
+                    <template v-else>
+                        <button @click="isAuthOpen = true" class="w-full text-left px-4 py-3 mt-2 rounded-md font-medium bg-zinc-100 hover:bg-zinc-200">Login</button>
+                    </template>
                     <Link :href="route('cart.index')" class="w-full text-left px-4 py-3 mt-1 rounded-md font-medium bg-zinc-100 hover:bg-zinc-200">My Cart</Link>
                 </nav>
             </div>
@@ -95,11 +156,11 @@ onMounted(() => {
                     </div>
                 </div>
                 <div class="mt-16 pt-8 border-t border-zinc-800 text-center text-sm text-zinc-500">
-                    <p>&copy; 2025 Vallera. Developed by John Dominic Gonzales.</p>
+                    <p>&copy; 2025 Vallera. All rights reserved.</p>
                 </div>
             </div>
         </footer>
-        
-        <AuthModal :show="isAuthOpen" @close="isAuthOpen = false" />
+
+        <AuthModal :show="isAuthOpen" @close="isAuthOpen = false" @auth-success="handleAuthSuccess" />
     </div>
 </template>

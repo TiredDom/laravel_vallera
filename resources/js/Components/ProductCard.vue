@@ -1,5 +1,7 @@
 <script setup>
-defineProps({
+const emit = defineEmits(['add-to-cart']);
+
+const props = defineProps({
     name: String,
     price: [Number, String],
     category: String,
@@ -10,8 +12,22 @@ defineProps({
     isNew: {
         type: Boolean,
         default: false
+    },
+    id: {
+        type: [Number, String],
+        required: true
     }
 });
+
+function handleAddToCart() {
+    emit('add-to-cart', {
+        product_id: props.id,
+        name: props.name,
+        price: props.price,
+        quantity: 1,
+        category: props.category
+    });
+}
 </script>
 
 <template>
@@ -31,7 +47,7 @@ defineProps({
                 <p class="text-primary-600 font-bold text-xl mt-2">₱{{ price.toLocaleString() }}</p>
             </div>
             <div class="mt-4">
-                 <button class="w-full py-3 bg-primary-600 text-white rounded-lg font-semibold transition-all duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:translate-y-2 md:group-hover:translate-y-0 hover:bg-primary-700">
+                 <button class="w-full py-3 bg-primary-600 text-white rounded-lg font-semibold transition-all duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:translate-y-2 md:group-hover:translate-y-0 hover:bg-primary-700" @click="handleAddToCart">
                     Add to Cart
                 </button>
             </div>

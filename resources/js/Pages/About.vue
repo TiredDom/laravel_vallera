@@ -62,16 +62,30 @@ import { Head } from '@inertiajs/vue3';
         <section class="py-24 bg-zinc-50">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center" data-aos="fade-up">
-                    <h2 class="text-4xl font-bold text-zinc-900">Meet The Developer</h2>
-                    <p class="mt-3 text-lg text-zinc-500 max-w-2xl mx-auto">The developer behind Vallera.</p>
+                    <h2 class="text-4xl font-bold text-zinc-900">Meet The Team</h2>
+                    <p class="mt-3 text-lg text-zinc-500 max-w-2xl mx-auto">The developers behind Vallera.</p>
                 </div>
-                <div class="mt-16 flex justify-center">
+                <div class="mt-16 flex justify-center gap-16 flex-wrap">
                     <div class="text-center" data-aos="fade-up" data-aos-delay="100">
+                        <div class="h-48 w-48 bg-zinc-200 rounded-full mx-auto flex items-center justify-center">
+                            <div class="text-zinc-400 font-medium">Image</div>
+                        </div>
+                        <h3 class="mt-6 text-xl font-semibold text-zinc-900">Ginelle Bacalando</h3>
+                        <p class="text-primary-600">Full Stack Developer</p>
+                    </div>
+                    <div class="text-center" data-aos="fade-up" data-aos-delay="200">
                         <div class="h-48 w-48 bg-zinc-200 rounded-full mx-auto flex items-center justify-center">
                             <div class="text-zinc-400 font-medium">Image</div>
                         </div>
                         <h3 class="mt-6 text-xl font-semibold text-zinc-900">John Dominic Gonzales</h3>
                         <p class="text-primary-600">Lead Developer</p>
+                    </div>
+                    <div class="text-center" data-aos="fade-up" data-aos-delay="300">
+                        <div class="h-48 w-48 bg-zinc-200 rounded-full mx-auto flex items-center justify-center">
+                            <div class="text-zinc-400 font-medium">Image</div>
+                        </div>
+                        <h3 class="mt-6 text-xl font-semibold text-zinc-900">Franz Jethro Principe</h3>
+                        <p class="text-primary-600">Full Stack Developer</p>
                     </div>
                 </div>
             </div>

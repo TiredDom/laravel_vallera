@@ -1,20 +1,74 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, watch } from 'vue';
 import MainLayout from '@/Layouts/MainLayout.vue';
 import ProductCard from '@/Components/ProductCard.vue';
-import { Head } from '@inertiajs/vue3';
+import AuthModal from '@/Components/AuthModal.vue';
+import ToastNotification from '@/Components/ToastNotification.vue';
+import { Head, router, usePage } from '@inertiajs/vue3';
 
-defineProps({
+const props = defineProps({
     products: Array,
 });
 
+const page = usePage();
+const isAuthenticated = computed(() => !!page.props.auth?.user);
+
 const filters = ['All', 'Chairs', 'Tables', 'Sofas', 'Lighting'];
 const activeFilter = ref('All');
+const isAuthOpen = ref(false);
+const toast = ref({ show: false, message: '', type: 'success' });
+
+watch(() => page.props.flash?.success, (message) => {
+    if (message) {
+        showToast(message, 'success');
+    }
+});
+
+watch(() => page.props.flash?.error, (message) => {
+    if (message) {
+        showToast(message, 'error');
+    }
+});
+
+function showToast(message, type = 'success') {
+    toast.value = { show: true, message, type };
+}
+
+function hideToast() {
+    toast.value.show = false;
+}
+
+function handleAuthSuccess(message) {
+    showToast(message, 'success');
+}
+
+function handleAddToCart(product) {
+    if (!isAuthenticated.value) {
+        isAuthOpen.value = true;
+        return;
+    }
+
+    router.post('/cart', product, {
+        preserveScroll: true,
+    });
+}
+
+const filteredProducts = computed(() => {
+    if (activeFilter.value === 'All') return props.products;
+    return props.products.filter(p => p.category === activeFilter.value);
+});
 </script>
 
 <template>
 <Head title="Our Collection" />
 <MainLayout>
+    <ToastNotification
+        :show="toast.show"
+        :message="toast.message"
+        :type="toast.type"
+        @close="hideToast"
+    />
+
     <div class="bg-white">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="py-24 text-center" data-aos="fade-up">
@@ -46,15 +100,19 @@ const activeFilter = ref('All');
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-8 my-24">
             <ProductCard
-                v-for="(product, index) in products"
+                v-for="(product, index) in filteredProducts"
                 :key="product.id"
+                :id="product.id"
                 :name="product.name"
                 :price="product.price"
                 :category="product.category"
                 :isNew="product.isNew"
                 :delay="index * 100"
+                @add-to-cart="handleAddToCart"
             />
         </div>
     </div>
+
+    <AuthModal :show="isAuthOpen" @close="isAuthOpen = false" @auth-success="handleAuthSuccess" />
 </MainLayout>
 </template>
