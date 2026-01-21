@@ -7,8 +7,8 @@ if [ ! -f "artisan" ]; then
 fi
 
 if [ -f "/etc/nginx/sites-available/default" ] && [ -f "default" ]; then
-    cp default /etc/nginx/sites-available/default
-    service nginx reload 2>/dev/null || true
+    sudo cp default /etc/nginx/sites-available/default 2>/dev/null || cp default /etc/nginx/sites-available/default
+    sudo service nginx reload 2>/dev/null || service nginx reload 2>/dev/null || true
 fi
 
 cat > .env << EOF
