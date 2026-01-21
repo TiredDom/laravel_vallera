@@ -88,16 +88,9 @@ function checkout() {
     isCheckoutOpen.value = true;
 }
 
-function handleCheckoutConfirm(paymentInfo) {
-    router.post('/cart/checkout', {
-        payment_method: paymentInfo.method,
-        payment_data: paymentInfo.data
-    }, {
-        preserveScroll: true,
-        onSuccess: () => {
-            isCheckoutOpen.value = false;
-        }
-    });
+function handleCheckoutSuccess() {
+    showToast('Order placed successfully! Redirecting to your orders...', 'success');
+    isCheckoutOpen.value = false;
 }
 
 function handleAddToCart(product) {
@@ -334,7 +327,7 @@ function handleAddToCart(product) {
             :subtotal="subtotal"
             :shipping="shipping"
             @close="isCheckoutOpen = false"
-            @confirm="handleCheckoutConfirm"
+            @success="handleCheckoutSuccess"
         />
     </MainLayout>
 </template>

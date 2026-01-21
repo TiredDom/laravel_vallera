@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Order;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class CartController extends Controller
@@ -15,7 +17,29 @@ class CartController extends Controller
     {
         if (Auth::check()) {
             $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
-            $items = $cart->items()->get();
+            $cartItems = $cart->items()->get();
+
+            $productIds = $cartItems->pluck('product_id')->toArray();
+            $products = \App\Models\Product::whereIn('id', $productIds)
+                ->where('is_active', true)
+                ->get()
+                ->keyBy('id');
+
+            $items = $cartItems->filter(function ($item) use ($products) {
+                return $products->has($item->product_id);
+            })->map(function ($item) use ($products) {
+                $product = $products->get($item->product_id);
+                return [
+                    'id' => $item->id,
+                    'product_id' => $item->product_id,
+                    'name' => $item->name,
+                    'price' => $item->price,
+                    'quantity' => $item->quantity,
+                    'category' => $item->category,
+                    'image_url' => $product->image_url,
+                    'stock' => $product->stock,
+                ];
+            })->values();
 
             $categories = $items->pluck('category')->unique()->filter()->values();
 
@@ -167,46 +191,105 @@ class CartController extends Controller
 
         $data = $request->validate([
             'payment_method' => 'required|string|in:gcash,card,bank',
-            'payment_data' => 'required|array'
+            'payment_data' => 'required|array',
+            'delivery' => 'required|array',
+            'delivery.name' => 'required|string|min:2|max:255',
+            'delivery.phone' => ['required', 'string', 'regex:/^(09|\+639)\d{9}$/'],
+            'delivery.address' => 'required|string|min:10|max:500',
+            'delivery.city' => 'required|string|min:2|max:100',
+            'delivery.province' => 'required|string|min:2|max:100',
+            'delivery.postalCode' => ['required', 'string', 'regex:/^\d{4}$/'],
+            'delivery.notes' => 'nullable|string|max:500',
         ]);
 
-        $subtotal = $cartItems->sum(function ($item) {
-            return $item->price * $item->quantity;
-        });
-        $shipping = 500;
-        $total = $subtotal + $shipping;
+        \DB::beginTransaction();
 
-        $order = Order::create([
-            'user_id' => Auth::id(),
-            'total' => $total,
-            'status' => 'pending',
-            'payment_method' => $data['payment_method'],
-        ]);
+        try {
+            $productIds = $cartItems->pluck('product_id')->toArray();
+            $products = \App\Models\Product::whereIn('id', $productIds)
+                ->where('is_active', true)
+                ->lockForUpdate()
+                ->get()
+                ->keyBy('id');
 
-        foreach ($cartItems as $cartItem) {
-            $order->items()->create([
-                'product_id' => $cartItem->product_id,
-                'name' => $cartItem->name,
-                'price' => $cartItem->price,
-                'quantity' => $cartItem->quantity,
-                'category' => $cartItem->category,
+            $invalidItems = [];
+            foreach ($cartItems as $item) {
+                $product = $products->get($item->product_id);
+
+                if (!$product) {
+                    $invalidItems[] = $item->name . ' (no longer available)';
+                    continue;
+                }
+
+                if ($item->quantity > $product->stock) {
+                    $invalidItems[] = $item->name . ' (insufficient stock)';
+                }
+            }
+
+            if (!empty($invalidItems)) {
+                \DB::rollBack();
+                return back()->withErrors([
+                    'error' => 'Some items are no longer available: ' . implode(', ', $invalidItems)
+                ]);
+            }
+
+            $subtotal = $cartItems->sum(function ($item) {
+                return $item->price * $item->quantity;
+            });
+            $shipping = 500;
+            $total = $subtotal + $shipping;
+
+            $order = Order::create([
+                'user_id' => Auth::id(),
+                'total' => $total,
+                'status' => 'pending',
+                'payment_method' => $data['payment_method'],
+                'delivery_name' => trim($data['delivery']['name']),
+                'delivery_phone' => preg_replace('/\s+/', '', $data['delivery']['phone']),
+                'delivery_address' => trim($data['delivery']['address']),
+                'delivery_city' => trim($data['delivery']['city']),
+                'delivery_province' => trim($data['delivery']['province']),
+                'delivery_postal_code' => trim($data['delivery']['postalCode']),
+                'delivery_notes' => isset($data['delivery']['notes']) ? trim($data['delivery']['notes']) : null,
             ]);
+
+            foreach ($cartItems as $cartItem) {
+                $product = $products->get($cartItem->product_id);
+
+                $order->items()->create([
+                    'product_id' => $cartItem->product_id,
+                    'name' => $cartItem->name,
+                    'price' => $cartItem->price,
+                    'quantity' => $cartItem->quantity,
+                    'category' => $cartItem->category,
+                ]);
+
+                $product->stock -= $cartItem->quantity;
+                $product->save();
+            }
+
+            ActivityLog::create([
+                'user_id' => Auth::id(),
+                'action' => 'create_order',
+                'model_type' => 'Order',
+                'model_id' => $order->id,
+                'description' => "Created order #{$order->id} with {$cartItems->count()} items, total: ₱{$total}",
+                'ip_address' => $request->ip(),
+            ]);
+
+            $cart->items()->delete();
+
+            cache()->forget("user." . Auth::id() . ".orders_count");
+
+            \DB::commit();
+
+            return redirect()->route('orders.index')->with('success', 'Order placed successfully! Your order #' . $order->id . ' has been confirmed.');
+
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            \Log::error('Checkout failed: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'An error occurred during checkout. Please try again.']);
         }
-
-        ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'create_order',
-            'model_type' => 'Order',
-            'model_id' => $order->id,
-            'description' => "Created order #{$order->id} with {$cartItems->count()} items, total: ₱{$total}",
-            'ip_address' => $request->ip(),
-        ]);
-
-        $cart->items()->delete();
-
-        cache()->forget("user." . Auth::id() . ".orders_count");
-
-        return back()->with('success', 'Order placed successfully! Payment confirmed via ' . ucfirst($data['payment_method']) . '.');
     }
 }
 
