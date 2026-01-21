@@ -6,6 +6,11 @@ if [ ! -f "artisan" ]; then
     exit 1
 fi
 
+if [ -f "/etc/nginx/sites-available/default" ] && [ -f "default" ]; then
+    cp default /etc/nginx/sites-available/default
+    service nginx reload 2>/dev/null || true
+fi
+
 cat > .env << EOF
 APP_NAME="${APP_NAME}"
 APP_ENV="${APP_ENV}"
