@@ -197,7 +197,7 @@ const totalOrdersPercentages = computed(() => {
         @close="hideToast"
     />
 
-    <div class="min-h-screen bg-gradient-to-br from-zinc-50 via-slate-50 to-zinc-100">
+    <div class="min-h-screen bg-gradient-to-br from-zinc-50 via-slate-50 to-zinc-100 overflow-x-hidden">
         <nav class="bg-white shadow-md border-b-2 border-primary-100 sticky top-0 z-40 backdrop-blur-sm bg-white/95">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16 md:h-20">

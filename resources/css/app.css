@@ -9,13 +9,21 @@
 
     html {
         overflow-x: hidden;
+        overflow-y: auto;
         -webkit-text-size-adjust: 100%;
     }
 
     body {
         overflow-x: hidden;
+        overflow-y: auto;
         position: relative;
         width: 100%;
+        min-height: 100vh;
+    }
+
+    #app {
+        min-height: 100vh;
+        overflow-x: hidden;
     }
 }
 
