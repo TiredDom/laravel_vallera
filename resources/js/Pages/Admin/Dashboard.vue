@@ -197,7 +197,7 @@ const totalOrdersPercentages = computed(() => {
         @close="hideToast"
     />
 
-    <div class="min-h-screen bg-gradient-to-br from-zinc-50 via-slate-50 to-zinc-100 w-full max-w-full overflow-x-hidden">
+    <div class="min-h-screen bg-gradient-to-br from-zinc-50 via-slate-50 to-zinc-100 w-full max-w-full overflow-hidden">
         <nav class="bg-white shadow-md border-b-2 border-primary-100 sticky top-0 z-40 backdrop-blur-sm bg-white/95 w-full">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                 <div class="flex justify-between items-center h-16 md:h-20">
@@ -317,8 +317,8 @@ const totalOrdersPercentages = computed(() => {
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8" data-aos="fade-up">
-                <Link href="/admin/orders" class="group bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all hover:scale-105 text-white">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 overflow-hidden" data-aos="fade-up">
+                <Link href="/admin/orders" class="group bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all text-white">
                     <div class="flex items-center justify-between mb-4">
                         <ShoppingBagIcon class="w-12 h-12 text-white/80" />
                         <svg class="w-6 h-6 text-white/60 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -329,7 +329,7 @@ const totalOrdersPercentages = computed(() => {
                     <p class="text-blue-100 text-sm">Track and manage all customer orders with status updates</p>
                 </Link>
 
-                <Link href="/admin/products" class="group bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all hover:scale-105 text-white">
+                <Link href="/admin/products" class="group bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all text-white">
                     <div class="flex items-center justify-between mb-4">
                         <ChartBarIcon class="w-12 h-12 text-white/80" />
                         <svg class="w-6 h-6 text-white/60 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -340,7 +340,7 @@ const totalOrdersPercentages = computed(() => {
                     <p class="text-emerald-100 text-sm">Add, edit, and manage your furniture catalog</p>
                 </Link>
 
-                <Link v-if="isSuperAdmin" href="/admin/logs" class="group bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all hover:scale-105 text-white">
+                <Link v-if="isSuperAdmin" href="/admin/logs" class="group bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all text-white">
                     <div class="flex items-center justify-between mb-4">
                         <svg class="w-12 h-12 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -365,7 +365,7 @@ const totalOrdersPercentages = computed(() => {
             </div>
 
             <div v-if="isSuperAdmin" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8" data-aos="fade-up">
-                <Link href="/admin/edit-requests" class="group bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all hover:scale-105 text-white relative overflow-hidden">
+                <Link href="/admin/edit-requests" class="group bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all  text-white relative overflow-hidden">
                     <div class="absolute top-2 right-2" v-if="stats.pendingEditRequests > 0">
                         <span class="inline-flex items-center justify-center px-3 py-1 text-xs font-bold leading-none text-amber-700 bg-white rounded-full shadow-lg animate-pulse">
                             {{ stats.pendingEditRequests }}
@@ -383,7 +383,7 @@ const totalOrdersPercentages = computed(() => {
                     <p class="text-amber-100 text-sm">Review admin requests to edit user accounts</p>
                 </Link>
 
-                <Link href="/admin/announcements" class="group bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all hover:scale-105 text-white relative overflow-hidden">
+                <Link href="/admin/announcements" class="group bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all  text-white relative overflow-hidden">
                     <div class="absolute top-2 right-2" v-if="stats.pendingAnnouncements > 0">
                         <span class="inline-flex items-center justify-center px-3 py-1 text-xs font-bold leading-none text-cyan-700 bg-white rounded-full shadow-lg animate-pulse">
                             {{ stats.pendingAnnouncements }}
@@ -403,7 +403,7 @@ const totalOrdersPercentages = computed(() => {
             </div>
 
             <Link v-else href="/admin/announcements" class="block mb-8" data-aos="fade-up">
-                <div class="group bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all hover:scale-105 text-white relative overflow-hidden">
+                <div class="group bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all  text-white relative overflow-hidden">
                     <div class="absolute top-2 right-2" v-if="stats.newAnnouncementsCount > 0">
                         <span class="inline-flex items-center justify-center px-3 py-1 text-xs font-bold leading-none text-cyan-700 bg-white rounded-full shadow-lg animate-pulse">
                             {{ stats.newAnnouncementsCount }}
