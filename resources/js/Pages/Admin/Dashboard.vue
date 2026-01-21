@@ -197,9 +197,9 @@ const totalOrdersPercentages = computed(() => {
         @close="hideToast"
     />
 
-    <div class="min-h-screen bg-gradient-to-br from-zinc-50 via-slate-50 to-zinc-100 overflow-x-hidden">
-        <nav class="bg-white shadow-md border-b-2 border-primary-100 sticky top-0 z-40 backdrop-blur-sm bg-white/95">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="min-h-screen bg-gradient-to-br from-zinc-50 via-slate-50 to-zinc-100 w-full max-w-full overflow-x-hidden">
+        <nav class="bg-white shadow-md border-b-2 border-primary-100 sticky top-0 z-40 backdrop-blur-sm bg-white/95 w-full">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                 <div class="flex justify-between items-center h-16 md:h-20">
                     <Link :href="route('home')" class="flex items-center gap-2 px-3 py-2 rounded-lg text-zinc-600 hover:text-primary-600 hover:bg-primary-50 transition-all font-medium group">
                         <ArrowLeftIcon class="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -229,7 +229,7 @@ const totalOrdersPercentages = computed(() => {
             </div>
         </nav>
 
-        <main class="max-w-7xl mx-auto py-6 md:py-8 px-4 sm:px-6 lg:px-8">
+        <main class="max-w-7xl mx-auto py-6 md:py-8 px-4 sm:px-6 lg:px-8 w-full">
             <div class="mb-6 md:mb-8" data-aos="fade-up">
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-4">
                     <div>
