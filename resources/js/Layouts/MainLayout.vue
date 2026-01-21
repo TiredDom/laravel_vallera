@@ -65,7 +65,7 @@ onMounted(() => {
         />
 
         <header class="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm shadow-sm z-50">
-            <div class="w-full px-3 sm:px-4 md:px-6 lg:px-8">
+            <div class="relative w-full px-3 sm:px-4 md:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16 md:h-20 max-w-7xl mx-auto">
                     <Link href="/" class="text-xl md:text-2xl font-bold text-zinc-900 flex-shrink-0">
                         Vallera
@@ -120,7 +120,7 @@ onMounted(() => {
                 leave-from-class="opacity-100 translate-y-0"
                 leave-to-class="opacity-0 -translate-y-2"
             >
-                <div v-if="isMobileMenuOpen" class="md:hidden bg-white border-t border-zinc-200 shadow-lg">
+                <div v-if="isMobileMenuOpen" class="absolute left-0 right-0 top-full md:hidden bg-white border-t border-zinc-200 shadow-lg w-full">
                     <nav class="flex flex-col py-4 max-h-[calc(100vh-5rem)] overflow-y-auto">
                         <Link
                             :href="route('home')"
