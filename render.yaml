@@ -1,0 +1,50 @@
+services:
+  - type: web
+    name: vallera-app
+    runtime: docker
+    plan: free
+    region: singapore
+    healthCheckPath: /
+    envVars:
+      - key: APP_NAME
+        value: "Vallera Furniture"
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_KEY
+        value: base64:bXD+Mya1xwmSka3UijboyQexvl3mQnuJhErauTNt7os=
+      - key: APP_URL
+        sync: false
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        value: vallera-db.mysql.database.azure.com
+      - key: DB_PORT
+        value: 3306
+      - key: DB_DATABASE
+        value: vallera
+      - key: DB_USERNAME
+        value: valleraadmin
+      - key: DB_PASSWORD
+        sync: false
+      - key: CACHE_STORE
+        value: database
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: SESSION_DRIVER
+        value: database
+      - key: SESSION_LIFETIME
+        value: 120
+      - key: FILESYSTEM_DISK
+        value: public
+      - key: LOG_CHANNEL
+        value: stack
+      - key: LOG_LEVEL
+        value: error
+      - key: SEED_ADMIN_NAME
+        value: "Super Admin"
+      - key: SEED_ADMIN_EMAIL
+        value: superadmin@vallera.com
+      - key: SEED_ADMIN_PASSWORD
+        sync: false
