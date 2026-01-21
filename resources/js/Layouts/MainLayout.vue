@@ -120,8 +120,8 @@ onMounted(() => {
                 leave-from-class="opacity-100 translate-y-0"
                 leave-to-class="opacity-0 -translate-y-2"
             >
-                <div v-if="isMobileMenuOpen" class="absolute left-0 right-0 top-full md:hidden bg-white border-t border-zinc-200 shadow-lg w-full">
-                    <nav class="flex flex-col py-4 max-h-[calc(100vh-5rem)] overflow-y-auto">
+                <div v-if="isMobileMenuOpen" class="absolute left-0 right-0 top-full md:hidden bg-white border-t border-zinc-200 shadow-lg w-full overflow-x-hidden">
+                    <nav class="flex flex-col py-4 max-h-[calc(100vh-5rem)] overflow-y-auto overflow-x-hidden">
                         <Link
                             :href="route('home')"
                             @click="isMobileMenuOpen = false"
