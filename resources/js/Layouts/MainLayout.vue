@@ -56,7 +56,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="bg-zinc-50 font-sans text-zinc-500 overflow-x-hidden min-w-0">
+    <div class="bg-zinc-50 font-sans text-zinc-500">
         <ToastNotification
             :show="toast.show"
             :message="toast.message"
