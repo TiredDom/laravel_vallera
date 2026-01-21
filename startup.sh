@@ -24,6 +24,8 @@ DB_PORT="${DB_PORT}"
 DB_DATABASE="${DB_DATABASE}"
 DB_USERNAME="${DB_USERNAME}"
 DB_PASSWORD="${DB_PASSWORD}"
+MYSQL_ATTR_SSL_CA=
+MYSQL_ATTR_SSL_VERIFY_SERVER_CERT=false
 
 SESSION_DRIVER="${SESSION_DRIVER}"
 SESSION_LIFETIME="${SESSION_LIFETIME}"
@@ -37,9 +39,14 @@ SEED_ADMIN_PASSWORD="${SEED_ADMIN_PASSWORD}"
 FILESYSTEM_DISK="${FILESYSTEM_DISK}"
 LOG_CHANNEL="${LOG_CHANNEL}"
 LOG_LEVEL="${LOG_LEVEL}"
+
+VIEW_COMPILED_PATH=/home/site/wwwroot/storage/framework/views
 EOF
 
 chmod 644 .env
+mkdir -p storage/framework/views
+mkdir -p storage/framework/cache
+mkdir -p storage/framework/sessions
 chmod -R 775 storage
 chmod -R 775 bootstrap/cache
 chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true
