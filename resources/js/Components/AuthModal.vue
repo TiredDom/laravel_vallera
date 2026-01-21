@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
+import { EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline';
 
 const props = defineProps({
     show: Boolean,
@@ -10,6 +11,9 @@ const emit = defineEmits(['close', 'auth-success']);
 
 const isLogin = ref(true);
 const isLoading = ref(false);
+const showLoginPassword = ref(false);
+const showRegisterPassword = ref(false);
+const showRegisterPasswordConfirm = ref(false);
 
 const loginForm = useForm({
     email: '',
@@ -164,8 +168,14 @@ function switchMode() {
                             </div>
                             <div>
                                 <label for="login-password" class="sr-only">Password</label>
-                                <input v-model="loginForm.password" type="password" id="login-password" placeholder="Password" autocomplete="current-password"
-                                    :class="['w-full bg-zinc-100 border rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition', loginForm.errors.password ? 'border-red-500' : 'border-zinc-200']">
+                                <div class="relative">
+                                    <input v-model="loginForm.password" :type="showLoginPassword ? 'text' : 'password'" id="login-password" placeholder="Password" autocomplete="current-password"
+                                        :class="['w-full bg-zinc-100 border rounded-lg px-4 py-3 pr-12 focus:ring-2 focus:ring-primary-500 outline-none transition', loginForm.errors.password ? 'border-red-500' : 'border-zinc-200']">
+                                    <button type="button" @click="showLoginPassword = !showLoginPassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors">
+                                        <EyeSlashIcon v-if="showLoginPassword" class="w-5 h-5" />
+                                        <EyeIcon v-else class="w-5 h-5" />
+                                    </button>
+                                </div>
                                 <p v-if="loginForm.errors.password" class="text-red-500 text-sm mt-1">{{ loginForm.errors.password }}</p>
                             </div>
 
@@ -191,14 +201,26 @@ function switchMode() {
                             </div>
                             <div>
                                 <label for="register-password" class="sr-only">Password</label>
-                                <input v-model="registerForm.password" type="password" id="register-password" placeholder="Password" autocomplete="new-password"
-                                    :class="['w-full bg-zinc-100 border rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition', registerForm.errors.password ? 'border-red-500' : 'border-zinc-200']">
+                                <div class="relative">
+                                    <input v-model="registerForm.password" :type="showRegisterPassword ? 'text' : 'password'" id="register-password" placeholder="Password" autocomplete="new-password"
+                                        :class="['w-full bg-zinc-100 border rounded-lg px-4 py-3 pr-12 focus:ring-2 focus:ring-primary-500 outline-none transition', registerForm.errors.password ? 'border-red-500' : 'border-zinc-200']">
+                                    <button type="button" @click="showRegisterPassword = !showRegisterPassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors">
+                                        <EyeSlashIcon v-if="showRegisterPassword" class="w-5 h-5" />
+                                        <EyeIcon v-else class="w-5 h-5" />
+                                    </button>
+                                </div>
                                 <p v-if="registerForm.errors.password" class="text-red-500 text-sm mt-1">{{ registerForm.errors.password }}</p>
                             </div>
                             <div>
                                 <label for="register-password-confirm" class="sr-only">Confirm Password</label>
-                                <input v-model="registerForm.password_confirmation" type="password" id="register-password-confirm" placeholder="Confirm Password" autocomplete="new-password"
-                                    :class="['w-full bg-zinc-100 border rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition', registerForm.errors.password_confirmation ? 'border-red-500' : 'border-zinc-200']">
+                                <div class="relative">
+                                    <input v-model="registerForm.password_confirmation" :type="showRegisterPasswordConfirm ? 'text' : 'password'" id="register-password-confirm" placeholder="Confirm Password" autocomplete="new-password"
+                                        :class="['w-full bg-zinc-100 border rounded-lg px-4 py-3 pr-12 focus:ring-2 focus:ring-primary-500 outline-none transition', registerForm.errors.password_confirmation ? 'border-red-500' : 'border-zinc-200']">
+                                    <button type="button" @click="showRegisterPasswordConfirm = !showRegisterPasswordConfirm" class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors">
+                                        <EyeSlashIcon v-if="showRegisterPasswordConfirm" class="w-5 h-5" />
+                                        <EyeIcon v-else class="w-5 h-5" />
+                                    </button>
+                                </div>
                                 <p v-if="registerForm.errors.password_confirmation" class="text-red-500 text-sm mt-1">{{ registerForm.errors.password_confirmation }}</p>
                             </div>
 
