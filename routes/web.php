@@ -4,25 +4,29 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ProductController;
+use App\Models\Product;
 
 Route::get('/', function () {
-    return Inertia::render('Landing');
+    $featuredProducts = Product::where('is_active', true)
+        ->where('is_featured', true)
+        ->limit(3)
+        ->get();
+
+    return Inertia::render('Landing', [
+        'featuredProducts' => $featuredProducts->map(function($product) {
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'description' => $product->description,
+                'price' => $product->price,
+                'image_url' => $product->image_url,
+            ];
+        }),
+    ]);
 })->name('home');
 
-Route::get('/products', function () {
-    return Inertia::render('Products', [
-        'products' => [
-            ['id' => 1, 'name' => 'Luxe Comfort Sofa', 'price' => 74999, 'category' => 'Sofas', 'isNew' => true],
-            ['id' => 2, 'name' => 'Minimalist Oak Desk', 'price' => 39999, 'category' => 'Tables', 'isNew' => false],
-            ['id' => 3, 'name' => 'Velvet Dream Armchair', 'price' => 29999, 'category' => 'Chairs', 'isNew' => false],
-            ['id' => 4, 'name' => 'Industrial Metal Bookshelf', 'price' => 44999, 'category' => 'Storage', 'isNew' => true],
-            ['id' => 5, 'name' => 'Aether Minimalist Lamp', 'price' => 7999, 'category' => 'Lighting', 'isNew' => false],
-            ['id' => 6, 'name' => 'Granite-Top Coffee Table', 'price' => 34999, 'category' => 'Tables', 'isNew' => false],
-            ['id' => 7, 'name' => 'Emerald Velvet Accent Chair', 'price' => 27999, 'category' => 'Chairs', 'isNew' => false],
-            ['id' => 8, 'name' => 'Modular Sectional Sofa', 'price' => 129999, 'category' => 'Sofas', 'isNew' => false],
-        ]
-    ]);
-})->name('products.index');
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 
 Route::get('/about', function () {
     return Inertia::render('About');
@@ -48,11 +52,36 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [\App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/orders', [\App\Http\Controllers\ProfileController::class, 'orders'])->name('orders.index');
+    Route::post('/orders/{order}/cancel', [\App\Http\Controllers\ProfileController::class, 'cancelOrder'])->name('orders.cancel');
 });
 
 Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+
     Route::post('/users/{id}/promote', [AdminController::class, 'promoteUser'])->name('admin.users.promote');
     Route::post('/users/{id}/demote', [AdminController::class, 'demoteUser'])->name('admin.users.demote');
+    Route::get('/users/{id}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
+    Route::patch('/users/{id}', [AdminController::class, 'updateUser'])->name('admin.users.update');
+    Route::delete('/users/{id}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
+    Route::post('/users/{id}/request-edit', [AdminController::class, 'requestUserEdit'])->name('admin.users.requestEdit');
+
+    Route::get('/edit-requests', [AdminController::class, 'editRequests'])->name('admin.editRequests');
+    Route::post('/edit-requests/{id}/review', [AdminController::class, 'reviewEditRequest'])->name('admin.editRequests.review');
+
+    Route::get('/announcements', [AdminController::class, 'announcements'])->name('admin.announcements');
+    Route::post('/announcements', [AdminController::class, 'createAnnouncement'])->name('admin.announcements.create');
+    Route::post('/announcements/{id}/review', [AdminController::class, 'reviewAnnouncement'])->name('admin.announcements.review');
+    Route::delete('/announcements/{id}', [AdminController::class, 'deleteAnnouncement'])->name('admin.announcements.delete');
+
+    Route::get('/orders', [AdminController::class, 'orders'])->name('admin.orders');
+    Route::patch('/orders/{id}/status', [AdminController::class, 'updateOrderStatus'])->name('admin.orders.updateStatus');
+
+    Route::get('/products', [AdminController::class, 'products'])->name('admin.products');
+    Route::post('/products', [AdminController::class, 'storeProduct'])->name('admin.products.store');
+    Route::post('/products/{id}', [AdminController::class, 'updateProduct'])->name('admin.products.update');
+    Route::delete('/products/{id}', [AdminController::class, 'deleteProduct'])->name('admin.products.delete');
+
+    Route::get('/logs', [AdminController::class, 'logs'])->name('admin.logs');
 });
 

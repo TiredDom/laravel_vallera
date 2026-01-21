@@ -56,7 +56,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="bg-zinc-50 font-sans text-zinc-500">
+    <div class="bg-zinc-50 font-sans text-zinc-500 overflow-x-hidden min-w-0">
         <ToastNotification
             :show="toast.show"
             :message="toast.message"
@@ -65,9 +65,9 @@ onMounted(() => {
         />
 
         <header class="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm shadow-sm z-50">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-20">
-                    <Link href="/" class="text-2xl font-bold text-zinc-900">
+            <div class="w-full px-3 sm:px-4 md:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16 md:h-20 max-w-7xl mx-auto">
+                    <Link href="/" class="text-xl md:text-2xl font-bold text-zinc-900 flex-shrink-0">
                         Vallera
                     </Link>
 
@@ -93,31 +93,136 @@ onMounted(() => {
                         </Link>
                     </div>
 
-                    <div class="md:hidden flex items-center">
-                        <button @click="isMobileMenuOpen = !isMobileMenuOpen" class="text-zinc-600">
-                             <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
+                    <div class="md:hidden flex items-center gap-2 flex-shrink-0">
+                        <Link :href="route('cart.index')" class="relative text-zinc-600 hover:text-primary-600 transition-colors p-2">
+                            <ShoppingCartIcon class="w-6 h-6" />
+                            <span v-if="cartCount > 0" class="absolute -top-1 -right-1 bg-primary-600 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">
+                                {{ cartCount > 9 ? '9+' : cartCount }}
+                            </span>
+                        </Link>
+                        <button @click="isMobileMenuOpen = !isMobileMenuOpen" class="text-zinc-600 hover:text-primary-600 transition-colors p-2">
+                            <svg v-if="!isMobileMenuOpen" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                            <svg v-else class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
                         </button>
                     </div>
                 </div>
             </div>
-             <div v-if="isMobileMenuOpen" class="md:hidden bg-white border-t border-zinc-100">
-                <nav class="flex flex-col space-y-1 p-4">
-                    <Link :href="route('home')" class="px-4 py-2 rounded-md font-medium">Home</Link>
-                    <Link :href="route('products.index')" class="px-4 py-2 rounded-md font-medium">Products</Link>
-                    <Link :href="route('about')" class="px-4 py-2 rounded-md font-medium">About</Link>
-                    <Link :href="route('contact')" class="px-4 py-2 rounded-md font-medium">Contact</Link>
-                    <template v-if="isAuthenticated">
-                        <div class="px-4 py-2 text-sm text-zinc-500">Signed in as {{ user.name }}</div>
-                        <Link v-if="user.is_admin" :href="route('admin.dashboard')" class="w-full text-left px-4 py-3 mt-1 rounded-md font-medium bg-zinc-100 hover:bg-zinc-200">Admin Dashboard</Link>
-                        <Link :href="route('profile.edit')" class="w-full text-left px-4 py-3 mt-1 rounded-md font-medium bg-zinc-100 hover:bg-zinc-200">Settings</Link>
-                        <button @click="handleMobileLogout" class="w-full text-left px-4 py-3 mt-1 rounded-md font-medium bg-red-50 text-red-600 hover:bg-red-100">Sign Out</button>
-                    </template>
-                    <template v-else>
-                        <button @click="isAuthOpen = true" class="w-full text-left px-4 py-3 mt-2 rounded-md font-medium bg-zinc-100 hover:bg-zinc-200">Login</button>
-                    </template>
-                    <Link :href="route('cart.index')" class="w-full text-left px-4 py-3 mt-1 rounded-md font-medium bg-zinc-100 hover:bg-zinc-200">My Cart</Link>
-                </nav>
-            </div>
+
+            <transition
+                enter-active-class="transition-all duration-300 ease-out"
+                enter-from-class="opacity-0 -translate-y-2"
+                enter-to-class="opacity-100 translate-y-0"
+                leave-active-class="transition-all duration-200 ease-in"
+                leave-from-class="opacity-100 translate-y-0"
+                leave-to-class="opacity-0 -translate-y-2"
+            >
+                <div v-if="isMobileMenuOpen" class="md:hidden bg-white border-t border-zinc-200 shadow-lg">
+                    <nav class="flex flex-col py-4 max-h-[calc(100vh-5rem)] overflow-y-auto">
+                        <Link
+                            :href="route('home')"
+                            @click="isMobileMenuOpen = false"
+                            :class="['flex items-center gap-3 px-6 py-3 font-medium transition-colors',
+                                    $page.url === '/' ? 'text-primary-600 bg-primary-50' : 'text-zinc-700 hover:bg-zinc-50']"
+                        >
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                            </svg>
+                            Home
+                        </Link>
+                        <Link
+                            :href="route('products.index')"
+                            @click="isMobileMenuOpen = false"
+                            :class="['flex items-center gap-3 px-6 py-3 font-medium transition-colors',
+                                    $page.url.startsWith('/products') ? 'text-primary-600 bg-primary-50' : 'text-zinc-700 hover:bg-zinc-50']"
+                        >
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                            </svg>
+                            Products
+                        </Link>
+                        <Link
+                            :href="route('about')"
+                            @click="isMobileMenuOpen = false"
+                            :class="['flex items-center gap-3 px-6 py-3 font-medium transition-colors',
+                                    $page.url.startsWith('/about') ? 'text-primary-600 bg-primary-50' : 'text-zinc-700 hover:bg-zinc-50']"
+                        >
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            About
+                        </Link>
+                        <Link
+                            :href="route('contact')"
+                            @click="isMobileMenuOpen = false"
+                            :class="['flex items-center gap-3 px-6 py-3 font-medium transition-colors',
+                                    $page.url.startsWith('/contact') ? 'text-primary-600 bg-primary-50' : 'text-zinc-700 hover:bg-zinc-50']"
+                        >
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                            Contact
+                        </Link>
+
+                        <div class="h-px bg-zinc-200 my-2 mx-4"></div>
+
+                        <template v-if="isAuthenticated">
+                            <div class="px-6 py-3">
+                                <div class="flex items-center gap-3 text-sm text-zinc-500">
+                                    <div class="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center">
+                                        <span class="text-primary-600 font-bold text-xs">{{ user.name.charAt(0).toUpperCase() }}</span>
+                                    </div>
+                                    <span class="font-medium">{{ user.name }}</span>
+                                </div>
+                            </div>
+                            <Link
+                                v-if="user.is_admin"
+                                :href="route('admin.dashboard')"
+                                @click="isMobileMenuOpen = false"
+                                class="flex items-center gap-3 px-6 py-3 font-medium text-purple-600 bg-purple-50 hover:bg-purple-100 transition-colors"
+                            >
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                </svg>
+                                Admin Dashboard
+                            </Link>
+                            <Link
+                                :href="route('orders.index')"
+                                @click="isMobileMenuOpen = false"
+                                class="flex items-center gap-3 px-6 py-3 font-medium text-zinc-700 hover:bg-zinc-50 transition-colors"
+                            >
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                </svg>
+                                My Orders
+                            </Link>
+                            <button
+                                @click="handleMobileLogout"
+                                class="flex items-center gap-3 w-full text-left px-6 py-3 font-medium text-red-600 hover:bg-red-50 transition-colors"
+                            >
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
+                                Sign Out
+                            </button>
+                        </template>
+                        <template v-else>
+                            <button
+                                @click="isAuthOpen = true; isMobileMenuOpen = false"
+                                class="flex items-center gap-3 w-full text-left px-6 py-3 font-medium text-white bg-primary-600 hover:bg-primary-700 mx-4 my-2 rounded-lg transition-colors"
+                            >
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                                </svg>
+                                Login / Register
+                            </button>
+                        </template>
+                    </nav>
+                </div>
+            </transition>
         </header>
 
         <main class="min-h-screen pt-20">

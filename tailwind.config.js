@@ -17,6 +17,8 @@ export default {
             colors: {
                 primary: colors.emerald,
                 dark: colors.zinc,
+                purple: colors.purple,
+                blue: colors.blue,
             }
         }
     },

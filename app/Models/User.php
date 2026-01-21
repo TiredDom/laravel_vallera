@@ -27,6 +27,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'is_admin' => 'boolean',
+            'announcements_last_seen_at' => 'datetime',
+            'edit_requests_last_seen_at' => 'datetime',
         ];
     }
 
@@ -38,5 +40,15 @@ class User extends Authenticatable
     public function isSuperAdmin(): bool
     {
         return $this->email === 'superadmin@vallera.com';
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function cart()
+    {
+        return $this->hasOne(Cart::class);
     }
 }

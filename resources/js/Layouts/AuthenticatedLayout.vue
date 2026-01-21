@@ -1,13 +1,15 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
+const page = usePage();
+const ordersCount = computed(() => page.props.auth?.user?.orders_count || 0);
 </script>
 
 <template>
@@ -16,11 +18,9 @@ const showingNavigationDropdown = ref(false);
             <nav
                 class="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800"
             >
-                <!-- Primary Navigation Menu -->
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div class="flex h-16 justify-between">
                         <div class="flex">
-                            <!-- Logo -->
                             <div class="flex shrink-0 items-center">
                                 <Link :href="route('dashboard')">
                                     <ApplicationLogo
@@ -29,7 +29,6 @@ const showingNavigationDropdown = ref(false);
                                 </Link>
                             </div>
 
-                            <!-- Navigation Links -->
                             <div
                                 class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
                             >
@@ -43,16 +42,18 @@ const showingNavigationDropdown = ref(false);
                         </div>
 
                         <div class="hidden sm:ms-6 sm:flex sm:items-center">
-                            <!-- Settings Dropdown -->
                             <div class="relative ms-3">
                                 <Dropdown align="right" width="48">
                                     <template #trigger>
-                                        <span class="inline-flex rounded-md">
+                                        <span class="inline-flex rounded-md relative">
                                             <button
                                                 type="button"
                                                 class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
                                             >
                                                 {{ $page.props.auth.user.name }}
+                                                <span v-if="ordersCount > 0" class="absolute -top-1 -right-1 h-5 w-5 bg-red-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                                                    {{ ordersCount > 9 ? '9+' : ordersCount }}
+                                                </span>
 
                                                 <svg
                                                     class="-me-0.5 ms-2 h-4 w-4"
@@ -72,9 +73,15 @@ const showingNavigationDropdown = ref(false);
 
                                     <template #content>
                                         <DropdownLink
-                                            :href="route('profile.edit')"
+                                            v-if="$page.props.auth.user.is_admin"
+                                            :href="route('admin.dashboard')"
                                         >
-                                            Profile
+                                            Admin Dashboard
+                                        </DropdownLink>
+                                        <DropdownLink
+                                            :href="route('orders.index')"
+                                        >
+                                            My Orders
                                         </DropdownLink>
                                         <DropdownLink
                                             :href="route('logout')"
@@ -88,7 +95,6 @@ const showingNavigationDropdown = ref(false);
                             </div>
                         </div>
 
-                        <!-- Hamburger -->
                         <div class="-me-2 flex items-center sm:hidden">
                             <button
                                 @click="
@@ -131,7 +137,6 @@ const showingNavigationDropdown = ref(false);
                     </div>
                 </div>
 
-                <!-- Responsive Navigation Menu -->
                 <div
                     :class="{
                         block: showingNavigationDropdown,
@@ -148,7 +153,6 @@ const showingNavigationDropdown = ref(false);
                         </ResponsiveNavLink>
                     </div>
 
-                    <!-- Responsive Settings Options -->
                     <div
                         class="border-t border-gray-200 pb-1 pt-4 dark:border-gray-600"
                     >
@@ -164,8 +168,14 @@ const showingNavigationDropdown = ref(false);
                         </div>
 
                         <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('profile.edit')">
-                                Profile
+                            <ResponsiveNavLink
+                                v-if="$page.props.auth.user.is_admin"
+                                :href="route('admin.dashboard')"
+                            >
+                                Admin Dashboard
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('orders.index')">
+                                My Orders
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 :href="route('logout')"
@@ -179,7 +189,6 @@ const showingNavigationDropdown = ref(false);
                 </div>
             </nav>
 
-            <!-- Page Heading -->
             <header
                 class="bg-white shadow dark:bg-gray-800"
                 v-if="$slots.header"
@@ -189,7 +198,6 @@ const showingNavigationDropdown = ref(false);
                 </div>
             </header>
 
-            <!-- Page Content -->
             <main>
                 <slot />
             </main>

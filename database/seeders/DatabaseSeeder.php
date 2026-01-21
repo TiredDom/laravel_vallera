@@ -12,6 +12,10 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
+        $this->call([
+            AdminSeeder::class,
+        ]);
+
         $userName = env('SEED_USER_NAME', 'Test User');
         $userEmail = env('SEED_USER_EMAIL', 'test@example.com');
         $userCount = (int) env('SEED_USER_COUNT', 1);
@@ -20,6 +24,10 @@ class DatabaseSeeder extends Seeder
         \App\Models\User::factory()->create([
             'name' => $userName,
             'email' => $userEmail,
+        ]);
+
+        $this->call([
+            AuditLogSeeder::class,
         ]);
     }
 }
