@@ -7,8 +7,8 @@ if [ ! -f "artisan" ]; then
 fi
 
 if [ -f "/etc/nginx/sites-available/default" ] && [ -f "default" ]; then
-    sudo cp default /etc/nginx/sites-available/default 2>/dev/null || cp default /etc/nginx/sites-available/default
-    sudo service nginx reload 2>/dev/null || service nginx reload 2>/dev/null || true
+    cp default /etc/nginx/sites-available/default 2>/dev/null
+    service nginx reload 2>/dev/null || true
 fi
 
 cat > .env << EOF
@@ -39,13 +39,18 @@ LOG_CHANNEL="${LOG_CHANNEL}"
 LOG_LEVEL="${LOG_LEVEL}"
 EOF
 
-chmod -R 755 storage bootstrap/cache 2>/dev/null || true
 chmod 644 .env
+chmod -R 775 storage
+chmod -R 775 bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true
 
 php artisan storage:link 2>/dev/null || true
 
 php artisan config:clear 2>/dev/null || true
 php artisan cache:clear 2>/dev/null || true
+php artisan view:clear 2>/dev/null || true
+php artisan route:clear 2>/dev/null || true
+
 php artisan config:cache 2>/dev/null || true
 php artisan route:cache 2>/dev/null || true
 
