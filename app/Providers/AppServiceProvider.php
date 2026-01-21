@@ -16,7 +16,7 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        if (config('app.env') === 'production' || env('APP_FORCE_HTTPS', false)) {
+        if (config('app.env') === 'production') {
             URL::forceScheme('https');
         }
 
@@ -24,21 +24,25 @@ class AppServiceProvider extends ServiceProvider
 
         Inertia::share([
             'auth' => function () {
-                if (Auth::check()) {
-                    $user = Auth::user();
-                    $user->loadCount('orders');
+                $user = Auth::user();
 
-                    return [
-                        'user' => [
-                            'id' => $user->id,
-                            'name' => $user->name,
-                            'email' => $user->email,
-                            'is_admin' => $user->is_admin,
-                            'orders_count' => $user->orders_count ?? 0,
-                        ],
-                    ];
+                if (!$user) {
+                    return ['user' => null];
                 }
-                return ['user' => null];
+
+                return [
+                    'user' => [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'is_admin' => $user->is_admin,
+                        'orders_count' => cache()->remember(
+                            "user.{$user->id}.orders_count",
+                            now()->addMinutes(5),
+                            fn() => $user->orders()->count()
+                        ),
+                    ],
+                ];
             },
         ]);
     }

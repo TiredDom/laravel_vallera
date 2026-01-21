@@ -204,6 +204,8 @@ class CartController extends Controller
 
         $cart->items()->delete();
 
+        cache()->forget("user." . Auth::id() . ".orders_count");
+
         return back()->with('success', 'Order placed successfully! Payment confirmed via ' . ucfirst($data['payment_method']) . '.');
     }
 }
