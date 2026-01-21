@@ -5,8 +5,17 @@ server {
     index index.php index.html index.htm;
     server_name _;
 
+    client_max_body_size 100M;
+
     location / {
         try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        access_log off;
+        try_files $uri =404;
     }
 
     location ~ \.php$ {
@@ -14,9 +23,16 @@ server {
         fastcgi_pass 127.0.0.1:9000;
         fastcgi_index index.php;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_read_timeout 300;
+        fastcgi_buffers 16 16k;
+        fastcgi_buffer_size 32k;
     }
 
     location ~ /\.ht {
+        deny all;
+    }
+
+    location ~ /\.(?!well-known).* {
         deny all;
     }
 }
