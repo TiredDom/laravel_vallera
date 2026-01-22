@@ -70,13 +70,26 @@ function handleAddToCart(product) {
         isAuthOpen.value = true;
         return;
     }
-
-    router.post('/cart', product, {
+    const payload = {
+        product_id: product.id,
+        name: product.name,
+        price: product.price,
+        quantity: 1,
+        category: product.category
+    };
+    router.post('/cart', payload, {
         preserveScroll: true,
+        onSuccess: () => {
+            showToast('Product added to cart!', 'success');
+            showDetailModal.value = false;
+        },
+        onError: (errors) => {
+            showToast(errors?.error || 'Failed to add to cart', 'error');
+        }
     });
 }
 
-function viewProductDetail(product) {
+function handleProductClick(product) {
     selectedProduct.value = product;
     showDetailModal.value = true;
 }
@@ -197,7 +210,7 @@ const stats = computed(() => ({
                 </button>
             </div>
 
-            <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                 <ProductCard
                     v-for="(product, index) in filteredProducts"
                     :key="product.id"
@@ -207,9 +220,9 @@ const stats = computed(() => ({
                     :stock="product.stock"
                     :category="product.category"
                     :image="product.image_url"
-                    :delay="index * 50"
+                    :delay="index * 100"
                     @add-to-cart="handleAddToCart"
-                    @view-details="viewProductDetail(product)"
+                    @click="handleProductClick(product)"
                 />
             </div>
         </div>

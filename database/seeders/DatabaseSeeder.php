@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             AdminSeeder::class,
+            ProductSeeder::class,
         ]);
 
         $userName = env('SEED_USER_NAME', 'Test User');

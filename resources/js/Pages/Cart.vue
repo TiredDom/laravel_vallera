@@ -98,9 +98,26 @@ function handleAddToCart(product) {
         isAuthOpen.value = true;
         return;
     }
-
-    router.post('/cart', product, {
+    if (!product || !product.id || !product.name || !product.price || product.stock <= 0) {
+        showToast('Invalid product or out of stock', 'error');
+        return;
+    }
+    const payload = {
+        product_id: product.id,
+        name: product.name,
+        price: product.price,
+        quantity: 1,
+        category: product.category
+    };
+    router.post('/cart', payload, {
         preserveScroll: true,
+        onSuccess: () => {
+            showToast('Product added to cart!', 'success');
+            isProductDetailOpen.value = false;
+        },
+        onError: (errors) => {
+            showToast(errors?.error || 'Failed to add to cart', 'error');
+        }
     });
 }
 </script>
@@ -308,6 +325,7 @@ function handleAddToCart(product) {
                         :name="item.name"
                         :price="item.price"
                         :category="item.category"
+                        :stock="item.stock"
                         :image="item.image_url"
                         :delay="index * 100"
                         @add-to-cart="handleAddToCart"

@@ -15,6 +15,7 @@ const emit = defineEmits(['close', 'success']);
 const currentStep = ref(1);
 const selectedMethod = ref('');
 const isProcessing = ref(false);
+const toast = ref({ show: false, message: '', type: 'success' });
 
 const delivery = ref({
     name: '',
@@ -27,7 +28,7 @@ const delivery = ref({
 });
 
 const paymentData = ref({
-    gcash: { phone: '', pin: '' },
+    gcash: { phone: '' },
     card: { cardNumber: '', cardName: '', expiryDate: '', cvv: '' },
     bank: { bankName: '', accountNumber: '', accountName: '' }
 });
@@ -40,33 +41,47 @@ const paymentMethods = [
     { id: 'bank', name: 'Bank Transfer', icon: BuildingLibraryIcon, description: 'Direct bank transfer' }
 ];
 
+function showToast(message, type = 'success') {
+    toast.value = { show: true, message, type };
+}
+
+function hideToast() {
+    toast.value.show = false;
+}
+
+function sanitizeInput(value) {
+    if (!value || typeof value !== 'string') return '';
+    return value.replace(/<[^>]*>/g, '').trim();
+}
+
 function validateDelivery() {
     errors.value = {};
+    delivery.value.name = sanitizeInput(delivery.value.name);
+    delivery.value.phone = sanitizeInput(delivery.value.phone);
+    delivery.value.address = sanitizeInput(delivery.value.address);
+    delivery.value.city = sanitizeInput(delivery.value.city);
+    delivery.value.province = sanitizeInput(delivery.value.province);
+    delivery.value.postalCode = sanitizeInput(delivery.value.postalCode);
+    delivery.value.notes = sanitizeInput(delivery.value.notes);
 
-    if (!delivery.value.name || delivery.value.name.trim().length < 2) {
+    if (!delivery.value.name || delivery.value.name.length < 2) {
         errors.value.name = 'Full name is required (minimum 2 characters)';
     }
-
-    if (!delivery.value.phone || !/^(09|\+639)\d{9}$/.test(delivery.value.phone.replace(/\s/g, ''))) {
+    if (!delivery.value.phone || !/^(09|\+639)\d{9}$/.test(delivery.value.phone)) {
         errors.value.phone = 'Valid Philippine mobile number required (09XXXXXXXXX)';
     }
-
-    if (!delivery.value.address || delivery.value.address.trim().length < 10) {
+    if (!delivery.value.address || delivery.value.address.length < 10) {
         errors.value.address = 'Complete address is required (minimum 10 characters)';
     }
-
-    if (!delivery.value.city || delivery.value.city.trim().length < 2) {
+    if (!delivery.value.city || delivery.value.city.length < 2) {
         errors.value.city = 'City is required';
     }
-
-    if (!delivery.value.province || delivery.value.province.trim().length < 2) {
+    if (!delivery.value.province || delivery.value.province.length < 2) {
         errors.value.province = 'Province is required';
     }
-
     if (!delivery.value.postalCode || !/^\d{4}$/.test(delivery.value.postalCode)) {
-        errors.value.postalCode = 'Valid 4-digit postal code required';
+        errors.value.postalCode = 'Postal code required (4 digits)';
     }
-
     return Object.keys(errors.value).length === 0;
 }
 
@@ -84,56 +99,62 @@ function selectPaymentMethod(method) {
 
 function validatePayment() {
     errors.value = {};
-
-    if (!selectedMethod.value) {
-        errors.value.method = 'Please select a payment method';
-        return false;
-    }
-
     if (selectedMethod.value === 'gcash') {
-        if (!paymentData.value.gcash.phone || !/^(09|\+639)\d{9}$/.test(paymentData.value.gcash.phone.replace(/\s/g, ''))) {
+        paymentData.value.gcash.phone = sanitizeInput(paymentData.value.gcash.phone);
+        if (!paymentData.value.gcash.phone || !/^(09|\+639)\d{9}$/.test(paymentData.value.gcash.phone)) {
             errors.value.gcashPhone = 'Valid GCash number required';
         }
-        if (!paymentData.value.gcash.pin || paymentData.value.gcash.pin.length !== 4) {
-            errors.value.gcashPin = 'Valid 4-digit PIN required';
-        }
     } else if (selectedMethod.value === 'card') {
+        paymentData.value.card.cardNumber = sanitizeInput(paymentData.value.card.cardNumber);
+        paymentData.value.card.cardName = sanitizeInput(paymentData.value.card.cardName);
+        paymentData.value.card.expiryDate = sanitizeInput(paymentData.value.card.expiryDate);
+        paymentData.value.card.cvv = sanitizeInput(paymentData.value.card.cvv);
         if (!paymentData.value.card.cardNumber || !/^\d{16}$/.test(paymentData.value.card.cardNumber.replace(/\s/g, ''))) {
             errors.value.cardNumber = 'Valid 16-digit card number required';
         }
-        if (!paymentData.value.card.cardName || paymentData.value.card.cardName.trim().length < 3) {
+        if (!paymentData.value.card.cardName || paymentData.value.card.cardName.length < 3) {
             errors.value.cardName = 'Cardholder name required';
         }
-        if (!paymentData.value.card.expiryDate || !/^(0[1-9]|1[0-2])\/\d{2}$/.test(paymentData.value.card.expiryDate)) {
+        if (!paymentData.value.card.expiryDate || !/^\d{2}\/\d{2}$/.test(paymentData.value.card.expiryDate)) {
             errors.value.expiryDate = 'Valid expiry date required (MM/YY)';
         }
         if (!paymentData.value.card.cvv || !/^\d{3,4}$/.test(paymentData.value.card.cvv)) {
-            errors.value.cvv = 'Valid CVV required (3-4 digits)';
+            errors.value.cvv = 'Valid CVV required (3 or 4 digits)';
         }
     } else if (selectedMethod.value === 'bank') {
-        if (!paymentData.value.bank.bankName) {
+        paymentData.value.bank.bankName = sanitizeInput(paymentData.value.bank.bankName);
+        paymentData.value.bank.accountNumber = sanitizeInput(paymentData.value.bank.accountNumber);
+        paymentData.value.bank.accountName = sanitizeInput(paymentData.value.bank.accountName);
+        if (!paymentData.value.bank.bankName || paymentData.value.bank.bankName.length < 3) {
             errors.value.bankName = 'Bank name required';
         }
-        if (!paymentData.value.bank.accountNumber || paymentData.value.bank.accountNumber.length < 10) {
+        if (!paymentData.value.bank.accountNumber || paymentData.value.bank.accountNumber.length < 6) {
             errors.value.accountNumber = 'Valid account number required';
         }
-        if (!paymentData.value.bank.accountName || paymentData.value.bank.accountName.trim().length < 3) {
+        if (!paymentData.value.bank.accountName || paymentData.value.bank.accountName.length < 3) {
             errors.value.accountName = 'Account holder name required';
         }
     }
-
     return Object.keys(errors.value).length === 0;
 }
 
 function processCheckout() {
     if (!validatePayment()) return;
-
     isProcessing.value = true;
-
+    if (selectedMethod.value === 'gcash') {
+        setTimeout(() => {
+            isProcessing.value = false;
+            emit('success');
+            emit('close');
+            showToast('GCash payment processed successfully!', 'success');
+            resetForm();
+        }, 2000);
+        return;
+    }
     router.post('/cart/checkout', {
         payment_method: selectedMethod.value,
-        payment_data: paymentData.value[selectedMethod.value],
-        delivery: delivery.value
+        payment_data: JSON.parse(JSON.stringify(paymentData.value[selectedMethod.value])),
+        delivery: JSON.parse(JSON.stringify(delivery.value))
     }, {
         onSuccess: () => {
             emit('success');
@@ -143,7 +164,7 @@ function processCheckout() {
         onError: (errors) => {
             isProcessing.value = false;
             if (errors.error) {
-                alert(errors.error);
+                showToast(errors.error, 'error');
             }
         },
         onFinish: () => {
@@ -157,12 +178,11 @@ function resetForm() {
     selectedMethod.value = '';
     delivery.value = { name: '', phone: '', address: '', city: '', province: '', postalCode: '', notes: '' };
     paymentData.value = {
-        gcash: { phone: '', pin: '' },
+        gcash: { phone: '' },
         card: { cardNumber: '', cardName: '', expiryDate: '', cvv: '' },
         bank: { bankName: '', accountNumber: '', accountName: '' }
     };
     errors.value = {};
-    isProcessing.value = false;
 }
 
 function closeModal() {
@@ -309,11 +329,6 @@ function formatExpiryDate(event) {
                                         <input v-model="paymentData.gcash.phone" type="tel" placeholder="09123456789" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                                         <p v-if="errors.gcashPhone" class="text-red-600 text-sm mt-1">{{ errors.gcashPhone }}</p>
                                     </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-slate-700 mb-2">PIN *</label>
-                                        <input v-model="paymentData.gcash.pin" type="password" maxlength="4" placeholder="••••" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-                                        <p v-if="errors.gcashPin" class="text-red-600 text-sm mt-1">{{ errors.gcashPin }}</p>
-                                    </div>
                                 </div>
 
                                 <div v-if="selectedMethod === 'card'" class="space-y-4 bg-slate-50 p-6 rounded-lg">
@@ -383,6 +398,15 @@ function formatExpiryDate(event) {
             </div>
         </Transition>
     </Teleport>
+
+    <div v-if="toast.show" class="fixed top-24 right-4 z-[100] max-w-sm w-full">
+        <div class="p-4 bg-emerald-100 border border-emerald-300 text-emerald-800 rounded-lg shadow-lg flex items-center gap-3">
+            <span>{{ toast.message }}</span>
+            <button @click="hideToast" class="ml-auto text-emerald-700 hover:text-emerald-900">
+                <XMarkIcon class="w-5 h-5" />
+            </button>
+        </div>
+    </div>
 </template>
 
 <style scoped>

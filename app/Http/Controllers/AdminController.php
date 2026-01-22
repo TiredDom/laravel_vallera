@@ -502,15 +502,13 @@ class AdminController extends Controller
             'image.mimes' => 'The image must be a file of type: jpg, jpeg, png, webp.',
         ]);
 
-        $validated['name'] = trim($validated['name']);
-        $validated['description'] = isset($validated['description']) ? trim($validated['description']) : null;
-        $validated['category'] = trim($validated['category']);
+        $dataToSave = $validated;
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = 'product-' . time() . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
             $imagePath = $image->storeAs('products', $imageName, 'public');
-            $validated['image_path'] = $imagePath;
+            $dataToSave['image_path'] = $imagePath;
         }
 
         if ($request->is_featured) {
@@ -520,7 +518,7 @@ class AdminController extends Controller
             }
         }
 
-        $product = Product::create($validated);
+        $product = Product::create($dataToSave);
 
         $this->logActivity('create_product', 'Product', $product->id, "Created product: {$product->name}");
 
@@ -532,23 +530,23 @@ class AdminController extends Controller
         $product = Product::findOrFail($id);
 
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z0-9\s\-&\'.()]+$/'],
+            'name' => ['required', 'string', 'max:255', 'regex:/^[A-Za-z\s\-\'\.\(\)&]+$/'], // Only letters, spaces, and allowed symbols
             'description' => ['nullable', 'string', 'max:5000'],
             'price' => ['required', 'numeric', 'min:0', 'max:9999999.99'],
             'stock' => ['required', 'integer', 'min:0', 'max:999999'],
-            'category' => ['required', 'string', 'max:100'],
+            'category' => ['required', 'string', 'max:100', 'regex:/^[A-Za-z\s\-]+$/'], // Only letters, spaces, and dashes
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'is_featured' => ['boolean'],
             'is_active' => ['boolean'],
         ], [
+            'name.regex' => 'Product name must only contain letters, spaces, and allowed symbols.',
+            'category.regex' => 'Category must only contain letters, spaces, and dashes.',
             'image.max' => 'The image must not be larger than 5MB.',
             'image.image' => 'The file must be an image.',
             'image.mimes' => 'The image must be a file of type: jpg, jpeg, png, webp.',
         ]);
 
-        $validated['name'] = trim($validated['name']);
-        $validated['description'] = isset($validated['description']) ? trim($validated['description']) : null;
-        $validated['category'] = trim($validated['category']);
+        $dataToSave = $validated;
 
         if ($request->hasFile('image')) {
             if ($product->image_path) {
@@ -558,7 +556,7 @@ class AdminController extends Controller
             $image = $request->file('image');
             $imageName = 'product-' . time() . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
             $imagePath = $image->storeAs('products', $imageName, 'public');
-            $validated['image_path'] = $imagePath;
+            $dataToSave['image_path'] = $imagePath;
         }
 
         if ($request->is_featured && !$product->is_featured) {
@@ -568,7 +566,7 @@ class AdminController extends Controller
             }
         }
 
-        $product->update($validated);
+        $product->update($dataToSave);
 
         $this->logActivity('update_product', 'Product', $product->id, "Updated product: {$product->name}");
 

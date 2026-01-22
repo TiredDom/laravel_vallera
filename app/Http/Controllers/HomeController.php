@@ -22,8 +22,9 @@ class HomeController extends Controller
                     'description' => $product->description,
                     'price' => $product->price,
                     'image_url' => $product->image_url,
-                    'quantity' => $product->stock,
-                    'category_name' => $product->category, // Use the category field directly
+                    'stock' => $product->stock,
+                    'category_name' => $product->category,
+                    'category' => $product->category,
                 ];
             }),
         ]);

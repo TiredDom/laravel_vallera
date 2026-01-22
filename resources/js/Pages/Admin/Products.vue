@@ -17,24 +17,54 @@
                             <p class="mt-1 text-sm sm:text-base text-slate-600">Manage your furniture catalog</p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <button
-                            @click="refreshProducts"
-                            :disabled="isRefreshing"
-                            class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-semibold transition-all flex items-center gap-2 text-sm disabled:opacity-50"
-                            title="Refresh stock data"
-                        >
-                            <svg class="w-4 h-4" :class="{ 'animate-spin': isRefreshing }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                            </svg>
-                            <span class="hidden sm:inline">{{ isRefreshing ? 'Refreshing...' : 'Refresh' }}</span>
-                        </button>
-                        <button @click="openAddModal" class="px-3 py-2 sm:px-4 sm:py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg font-semibold hover:from-emerald-700 hover:to-teal-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-sm sm:text-base whitespace-nowrap">
-                        <svg class="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        <span>Add Product</span>
-                    </button>
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                        <div class="flex flex-col sm:flex-row gap-2 w-full">
+                            <div class="flex-1">
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Search</label>
+                                <div class="relative">
+                                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
+                                    </svg>
+                                    <input
+                                        v-model="searchQuery"
+                                        type="text"
+                                        placeholder="Search products..."
+                                        class="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                                        @input="debouncedFilter"
+                                    />
+                                </div>
+                            </div>
+                            <div class="sm:w-64">
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Category</label>
+                                <select
+                                    v-model="categoryFilter"
+                                    class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all font-medium"
+                                    @change="applyFilters"
+                                >
+                                    <option value="All">All Categories</option>
+                                    <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 mt-2 sm:mt-0">
+                            <button
+                                @click="refreshProducts"
+                                :disabled="isRefreshing"
+                                class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-semibold transition-all flex items-center gap-2 text-sm disabled:opacity-50"
+                                title="Refresh stock data"
+                            >
+                                <svg class="w-4 h-4" :class="{ 'animate-spin': isRefreshing }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                <span class="hidden sm:inline">{{ isRefreshing ? 'Refreshing...' : 'Refresh' }}</span>
+                            </button>
+                            <button @click="openAddModal" class="px-3 py-2 sm:px-4 sm:py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg font-semibold hover:from-emerald-700 hover:to-teal-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-sm sm:text-base whitespace-nowrap">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                                <span>Add Product</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -115,7 +145,7 @@
 
             <div class="bg-white rounded-xl shadow-lg border border-slate-200" data-aos="fade-up" data-aos-delay="100">
                 <div class="p-4 sm:p-6 space-y-4 sm:space-y-6">
-                    <div v-for="product in products" :key="product.id" class="flex flex-col sm:flex-row sm:items-center gap-4 p-4 border-2 border-slate-200 rounded-xl hover:border-emerald-300 hover:shadow-md transition-all">
+                    <div v-for="product in filteredProducts" :key="product.id" class="flex flex-col sm:flex-row sm:items-center gap-4 p-4 border-2 border-slate-200 rounded-xl hover:border-emerald-300 hover:shadow-md transition-all">
                         <div class="flex items-start gap-3 sm:gap-4 flex-1">
                             <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0">
                                 <img v-if="product.image_url" :src="product.image_url" :alt="product.name" class="w-full h-full object-cover">
@@ -130,8 +160,8 @@
                                     <h3 class="text-base sm:text-lg font-bold text-slate-900 truncate">{{ product.name }}</h3>
                                     <span v-if="product.is_featured" class="px-2 py-0.5 text-xs font-bold rounded-full bg-amber-100 text-amber-700 whitespace-nowrap">⭐ Featured</span>
                                     <span v-if="!product.is_active" class="px-2 py-0.5 text-xs font-bold rounded-full bg-red-100 text-red-700 whitespace-nowrap">Inactive</span>
-                                    <span v-if="product.quantity === 0" class="px-2 py-0.5 text-xs font-bold rounded-full bg-red-600 text-white whitespace-nowrap">SOLD OUT</span>
-                                    <span v-else-if="product.quantity < 10" class="px-2 py-0.5 text-xs font-bold rounded-full bg-amber-500 text-white whitespace-nowrap">LOW STOCK</span>
+                                    <span v-if="product.stock === 0" class="px-2 py-0.5 text-xs font-bold rounded-full bg-red-600 text-white whitespace-nowrap">SOLD OUT</span>
+                                    <span v-else-if="product.stock < 10" class="px-2 py-0.5 text-xs font-bold rounded-full bg-amber-500 text-white whitespace-nowrap">LOW STOCK</span>
                                 </div>
                                 <p class="text-xs sm:text-sm text-slate-600 mb-2 line-clamp-2">{{ product.description || 'No description' }}</p>
                                 <div class="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm">
@@ -141,12 +171,12 @@
                                         <span
                                             class="px-2 py-0.5 rounded-md font-bold"
                                             :class="{
-                                                'bg-red-100 text-red-700': product.quantity === 0,
-                                                'bg-amber-100 text-amber-700': product.quantity > 0 && product.quantity < 10,
-                                                'bg-emerald-100 text-emerald-700': product.quantity >= 10
+                                                'bg-red-100 text-red-700': product.stock === 0,
+                                                'bg-amber-100 text-amber-700': product.stock > 0 && product.stock < 10,
+                                                'bg-emerald-100 text-emerald-700': product.stock >= 10
                                             }"
                                         >
-                                            {{ product.quantity }}
+                                            {{ product.stock }}
                                         </span>
                                     </div>
                                     <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-slate-100 text-slate-700 whitespace-nowrap">{{ product.category_name }}</span>
@@ -404,6 +434,16 @@ const deleteProcessing = ref(false);
 const toast = ref({ show: false, message: '', type: 'success' });
 const addImagePreview = ref(null);
 const editImagePreview = ref(null);
+const categoryFilter = ref('All');
+const searchQuery = ref('');
+
+let debounceTimer = null;
+const debouncedFilter = () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+        applyFilters();
+    }, 300);
+};
 
 const addForm = useForm({
     name: '',
@@ -428,10 +468,27 @@ const editForm = useForm({
     is_active: true,
 });
 
-const totalStock = computed(() => props.products.reduce((sum, p) => sum + p.quantity, 0));
-const categories = computed(() => [...new Set(props.products.map(p => p.category_name))]);
-const lowStockCount = computed(() => props.products.filter(p => p.quantity > 0 && p.quantity < 10).length);
-const outOfStockCount = computed(() => props.products.filter(p => p.quantity === 0).length);
+const totalStock = computed(() => props.products.reduce((sum, p) => sum + p.stock, 0));
+const categories = computed(() => {
+    const cats = props.products.map(p => p.category_name).filter(Boolean);
+    return ['All', ...Array.from(new Set(cats))];
+});
+const filteredProducts = computed(() => {
+    let filtered = props.products;
+    if (categoryFilter.value !== 'All') {
+        filtered = filtered.filter(p => p.category_name === categoryFilter.value);
+    }
+    if (searchQuery.value) {
+        const query = searchQuery.value.toLowerCase();
+        filtered = filtered.filter(p =>
+            p.name.toLowerCase().includes(query) ||
+            (p.description && p.description.toLowerCase().includes(query))
+        );
+    }
+    return filtered;
+});
+const lowStockCount = computed(() => props.products.filter(p => p.stock > 0 && p.stock < 10).length);
+const outOfStockCount = computed(() => props.products.filter(p => p.stock === 0).length);
 
 watch(() => page.props.flash?.success, (message) => {
     if (message) toast.value = { show: true, message, type: 'success' };
@@ -463,7 +520,7 @@ function openEditModal(product) {
     editForm.name = product.name;
     editForm.description = product.description;
     editForm.price = product.price;
-    editForm.stock = product.quantity;
+    editForm.stock = product.stock;
     editForm.category = product.category_name;
     editForm.is_featured = product.is_featured;
     editForm.is_active = product.is_active;

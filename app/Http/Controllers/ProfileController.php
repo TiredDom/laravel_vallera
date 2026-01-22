@@ -92,17 +92,31 @@ class ProfileController extends Controller
             return back()->withErrors(['error' => 'This order cannot be cancelled.']);
         }
 
-        $order->update(['status' => 'cancelled']);
+        \DB::beginTransaction();
+        try {
+            // Restore product stock
+            foreach ($order->items as $item) {
+                $product = \App\Models\Product::find($item->product_id);
+                if ($product) {
+                    $product->stock += $item->quantity;
+                    $product->save();
+                }
+            }
+            $order->update(['status' => 'cancelled']);
 
-        ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'cancel_order',
-            'model_type' => 'Order',
-            'model_id' => $order->id,
-            'description' => "Cancelled order #{$order->id}",
-            'ip_address' => $request->ip(),
-        ]);
-
-        return back()->with('success', 'Order cancelled successfully.');
+            \App\Models\ActivityLog::create([
+                'user_id' => Auth::id(),
+                'action' => 'cancel_order',
+                'model_type' => 'Order',
+                'model_id' => $order->id,
+                'description' => "Cancelled order #{$order->id}",
+                'ip_address' => $request->ip(),
+            ]);
+            \DB::commit();
+            return back()->with('success', 'Order cancelled successfully.');
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            return back()->withErrors(['error' => 'Failed to cancel order. Please try again.']);
+        }
     }
 }
