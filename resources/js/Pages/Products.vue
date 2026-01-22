@@ -204,6 +204,7 @@ const stats = computed(() => ({
                     :id="product.id"
                     :name="product.name"
                     :price="product.price"
+                    :stock="product.stock"
                     :category="product.category"
                     :image="product.image_url"
                     :delay="index * 50"

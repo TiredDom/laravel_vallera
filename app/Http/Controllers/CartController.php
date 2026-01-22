@@ -127,6 +127,16 @@ class CartController extends Controller
             'category' => ['nullable', 'string', 'max:100'],
         ]);
 
+        $product = \App\Models\Product::find($data['product_id']);
+
+        if (!$product || !$product->is_active) {
+            return back()->withErrors(['error' => 'Product not available']);
+        }
+
+        if ($product->stock <= 0) {
+            return back()->withErrors(['error' => 'Product is out of stock']);
+        }
+
         $data['name'] = trim($data['name']);
         if (isset($data['category'])) {
             $data['category'] = trim($data['category']);
@@ -134,6 +144,17 @@ class CartController extends Controller
 
         $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
         $item = $cart->items()->where('product_id', $data['product_id'])->first();
+
+        $newQuantity = $item ? $item->quantity + $data['quantity'] : $data['quantity'];
+
+        if ($newQuantity > $product->stock) {
+            $available = $product->stock - ($item ? $item->quantity : 0);
+            if ($available <= 0) {
+                return back()->withErrors(['error' => 'No more stock available for this product']);
+            }
+            return back()->withErrors(['error' => "Only {$available} more available in stock"]);
+        }
+
         if ($item) {
             $item->quantity += $data['quantity'];
             $item->save();
@@ -165,6 +186,16 @@ class CartController extends Controller
         $data = $request->validate([
             'quantity' => 'required|integer|min:1',
         ]);
+
+        $product = \App\Models\Product::find($product_id);
+
+        if (!$product || !$product->is_active) {
+            return back()->withErrors(['error' => 'Product not available']);
+        }
+
+        if ($data['quantity'] > $product->stock) {
+            return back()->withErrors(['error' => "Only {$product->stock} available in stock"]);
+        }
 
         $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
         $item = $cart->items()->where('product_id', $product_id)->first();
