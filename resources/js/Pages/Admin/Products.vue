@@ -535,7 +535,7 @@ function submitEditProduct() {
             editImagePreview.value = null;
             toast.value = { show: true, message: 'Product updated successfully', type: 'success' };
         },
-        onError: (errors).
+        onError: (errors) => {
             const firstError = Object.values(errors)[0];
             toast.value = { show: true, message: firstError || 'Failed to update product', type: 'error' };
         },
