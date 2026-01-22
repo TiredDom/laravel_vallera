@@ -108,25 +108,21 @@ function getPaymentColor(method) {
     <Head title="Order Management" />
 
     <div class="min-h-screen bg-gradient-to-br from-zinc-50 to-zinc-100">
-        <nav class="bg-white shadow-lg border-b border-zinc-200 sticky top-0 z-40">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 sm:h-16 gap-3 sm:gap-0">
-                    <Link :href="route('admin.dashboard')" class="flex items-center text-zinc-600 hover:text-primary-600 transition-colors font-medium text-sm sm:text-base">
-                        <ArrowLeftIcon class="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" />
-                        <span class="whitespace-nowrap">Back to Dashboard</span>
+        <div class="bg-white shadow-lg border-b border-zinc-200 sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+                <div class="flex items-center gap-3 sm:gap-4">
+                    <Link :href="route('admin.dashboard')" class="p-2 hover:bg-slate-100 rounded-lg transition-colors flex-shrink-0">
+                        <ArrowLeftIcon class="w-5 h-5 sm:w-6 sm:h-6 text-slate-600" />
                     </Link>
-                    <div class="flex items-center justify-center">
-                        <h1 class="text-lg sm:text-2xl font-bold bg-gradient-to-r from-primary-600 to-emerald-600 bg-clip-text text-transparent text-center">Order Management</h1>
+                    <div class="min-w-0 flex-1">
+                        <h1 class="text-xl sm:text-3xl font-bold bg-gradient-to-r from-primary-600 to-emerald-600 bg-clip-text text-transparent">Order Management</h1>
+                        <p class="mt-1 text-sm sm:text-base text-slate-600">Manage and track customer orders</p>
                     </div>
                 </div>
             </div>
-        </nav>
+        </div>
 
         <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-            <div class="mb-8" data-aos="fade-up">
-                <h1 class="text-4xl font-bold text-zinc-900 mb-2">Orders</h1>
-                <p class="text-zinc-600 text-lg">Manage and track all customer orders</p>
-            </div>
 
             <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8" data-aos="fade-up" data-aos-delay="100">
                 <div class="bg-white rounded-xl shadow-lg p-6 border-2 border-zinc-200">
