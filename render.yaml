@@ -5,6 +5,10 @@ services:
     plan: free
     region: singapore
     healthCheckPath: /
+    disks:
+      - name: storage
+        mountPath: /var/www/storage
+        sizeGB: 1
     envVars:
       - key: APP_NAME
         value: "Vallera Furniture"
@@ -28,12 +32,6 @@ services:
         value: valleraadmin
       - key: DB_PASSWORD
         sync: false
-      - key: MYSQL_ATTR_SSL_CA
-        value: ""
-      - key: MYSQL_ATTR_SSL_VERIFY_SERVER_CERT
-        value: false
-      - key: VIEW_COMPILED_PATH
-        value: /var/www/storage/framework/views
       - key: CACHE_STORE
         value: database
       - key: QUEUE_CONNECTION
