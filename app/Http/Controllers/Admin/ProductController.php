@@ -18,6 +18,7 @@ class ProductController extends Controller
         $products = Product::latest()->get();
 
         $featuredCount = Product::where('is_featured', true)->count();
+        $maxFeatured = 8;
 
         return Inertia::render('Admin/Products', [
             'products' => $products->map(function($product) {
@@ -36,6 +37,7 @@ class ProductController extends Controller
                 ];
             }),
             'featuredCount' => $featuredCount,
+            'maxFeatured' => $maxFeatured,
         ]);
     }
 
@@ -70,8 +72,8 @@ class ProductController extends Controller
 
         if ($request->is_featured) {
             $featuredCount = Product::where('is_featured', true)->count();
-            if ($featuredCount >= 3) {
-                return back()->withErrors(['is_featured' => 'Maximum 3 products can be featured. Please unfeature another product first.']);
+            if ($featuredCount >= 8) {
+                return back()->withErrors(['is_featured' => 'Maximum 8 products can be featured. Please unfeature another product first.']);
             }
         }
 
@@ -117,8 +119,8 @@ class ProductController extends Controller
 
         if ($request->is_featured && !$product->is_featured) {
             $featuredCount = Product::where('is_featured', true)->where('id', '!=', $id)->count();
-            if ($featuredCount >= 3) {
-                return back()->withErrors(['is_featured' => 'Maximum 3 products can be featured. Please unfeature another product first.']);
+            if ($featuredCount >= 8) {
+                return back()->withErrors(['is_featured' => 'Maximum 8 products can be featured. Please unfeature another product first.']);
             }
         }
 

@@ -17,7 +17,7 @@
         <div class="bg-white rounded-xl shadow-lg border-2 border-blue-200 p-4 sm:p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-base sm:text-xl font-bold text-blue-600">{{ featuredCount }}/3</p>
+                    <p class="text-base sm:text-xl font-bold text-blue-600">{{ featuredCount }}/{{ maxFeatured }}</p>
                     <p class="text-xs sm:text-sm text-slate-600 mt-1 font-medium">Featured</p>
                 </div>
                 <div class="p-2 sm:p-3 bg-blue-100 rounded-lg">
@@ -92,6 +92,10 @@ import { computed } from 'vue';
 const props = defineProps({
     products: Array,
     featuredCount: Number,
+    maxFeatured: {
+        type: Number,
+        default: 3
+    }
 });
 
 const totalStock = computed(() => props.products.reduce((sum, p) => sum + p.stock, 0));

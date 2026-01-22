@@ -38,6 +38,7 @@
             <ProductStats
                 :products="products"
                 :featured-count="featuredCount"
+                :max-featured="maxFeatured"
             />
 
             <ProductList
@@ -98,6 +99,10 @@ import ProductDetailModal from '@/Components/ProductDetailModal.vue';
 const props = defineProps({
     products: Array,
     featuredCount: Number,
+    maxFeatured: {
+        type: Number,
+        default: 3
+    }
 });
 
 const categoryOptions = [
