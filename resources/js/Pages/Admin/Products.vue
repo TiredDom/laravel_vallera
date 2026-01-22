@@ -145,61 +145,61 @@
                 <div class="fixed inset-0 bg-black/30 backdrop-blur-sm" />
             </TransitionChild>
             <div class="fixed inset-0 overflow-y-auto">
-                <div class="flex min-h-full items-center justify-center p-4">
+                <div class="flex min-h-full items-center justify-center p-2 sm:p-4">
                     <TransitionChild enter="ease-out duration-300" enter-from="opacity-0 scale-95" enter-to="opacity-100 scale-100" leave="ease-in duration-200" leave-from="opacity-100 scale-100" leave-to="opacity-0 scale-95">
-                        <DialogPanel class="w-full max-w-2xl bg-white rounded-xl shadow-2xl">
-                            <div class="bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-4 rounded-t-xl">
-                                <h3 class="text-lg font-semibold text-white">Add New Product</h3>
+                        <DialogPanel class="w-full max-w-2xl bg-white rounded-xl shadow-2xl max-h-[95vh] overflow-y-auto">
+                            <div class="bg-gradient-to-r from-emerald-600 to-teal-600 px-4 sm:px-6 py-3 sm:py-4 rounded-t-xl sticky top-0 z-10">
+                                <h3 class="text-base sm:text-lg font-semibold text-white">Add New Product</h3>
                             </div>
-                            <form @submit.prevent="submitAddProduct" class="p-6 space-y-4">
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div class="col-span-2">
-                                        <label class="block text-sm font-semibold text-slate-700 mb-2">Product Name</label>
-                                        <input v-model="addForm.name" type="text" required class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all" placeholder="Enter product name" />
+                            <form @submit.prevent="submitAddProduct" class="p-4 sm:p-6 space-y-3 sm:space-y-4">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                                    <div class="sm:col-span-2">
+                                        <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">Product Name</label>
+                                        <input v-model="addForm.name" type="text" required class="w-full px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all" placeholder="Enter product name" />
                                     </div>
-                                    <div class="col-span-2">
-                                        <label class="block text-sm font-semibold text-slate-700 mb-2">Description</label>
-                                        <textarea v-model="addForm.description" rows="3" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all" placeholder="Enter product description"></textarea>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-2">Price (₱)</label>
-                                        <input v-model="addForm.price" type="number" step="0.01" required min="0" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all" placeholder="0.00" />
+                                    <div class="sm:col-span-2">
+                                        <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">Description</label>
+                                        <textarea v-model="addForm.description" rows="2" class="w-full px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all" placeholder="Enter product description"></textarea>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-2">Stock</label>
-                                        <input v-model="addForm.stock" type="number" required min="0" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all" placeholder="0" />
+                                        <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">Price (₱)</label>
+                                        <input v-model="addForm.price" type="number" step="0.01" required min="0" class="w-full px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all" placeholder="0.00" />
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-2">Category</label>
-                                        <select v-model="addForm.category" required class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all">
+                                        <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">Stock</label>
+                                        <input v-model="addForm.stock" type="number" required min="0" class="w-full px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all" placeholder="0" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">Category</label>
+                                        <select v-model="addForm.category" required class="w-full px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all">
                                             <option value="">Select Category</option>
                                             <option v-for="cat in categoryOptions" :key="cat" :value="cat">{{ cat }}</option>
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-2">
+                                        <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">
                                             Image <span class="text-red-500">*</span>
                                         </label>
-                                        <input type="file" @change="handleAddImage" accept="image/*" required class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all" />
-                                        <p class="text-xs text-slate-500 mt-1">Required: JPG, PNG, or WEBP (max 5MB)</p>
+                                        <input type="file" @change="handleAddImage" accept="image/*" required class="w-full px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
+                                        <p class="text-xs text-slate-500 mt-1">JPG, PNG, or WEBP (max 5MB)</p>
                                     </div>
-                                    <div v-if="addImagePreview" class="col-span-2">
-                                        <img :src="addImagePreview" class="w-full h-48 object-cover rounded-lg" alt="Preview">
+                                    <div v-if="addImagePreview" class="sm:col-span-2">
+                                        <img :src="addImagePreview" class="w-full h-32 sm:h-48 object-cover rounded-lg border-2 border-slate-200" alt="Preview">
                                     </div>
-                                    <div class="col-span-2 flex items-center gap-4">
+                                    <div class="sm:col-span-2 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                                         <label class="flex items-center gap-2">
-                                            <input v-model="addForm.is_featured" type="checkbox" class="w-5 h-5 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500">
-                                            <span class="text-sm font-medium text-slate-700">Featured (Max 3)</span>
+                                            <input v-model="addForm.is_featured" type="checkbox" class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500">
+                                            <span class="text-xs sm:text-sm font-medium text-slate-700">Featured (Max 3)</span>
                                         </label>
                                         <label class="flex items-center gap-2">
-                                            <input v-model="addForm.is_active" type="checkbox" class="w-5 h-5 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500">
-                                            <span class="text-sm font-medium text-slate-700">Active</span>
+                                            <input v-model="addForm.is_active" type="checkbox" class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500">
+                                            <span class="text-xs sm:text-sm font-medium text-slate-700">Active</span>
                                         </label>
                                     </div>
                                 </div>
-                                <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
-                                    <button type="button" @click="showAddModal = false" class="px-4 py-2 text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg font-medium transition-colors">Cancel</button>
-                                    <button type="submit" :disabled="addForm.processing" class="px-6 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg font-semibold hover:from-emerald-700 hover:to-teal-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                                <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-slate-200">
+                                    <button type="button" @click="showAddModal = false" class="w-full sm:w-auto px-4 py-2 text-sm sm:text-base text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg font-medium transition-colors">Cancel</button>
+                                    <button type="submit" :disabled="addForm.processing" class="w-full sm:w-auto px-6 py-2 text-sm sm:text-base bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg font-semibold hover:from-emerald-700 hover:to-teal-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                                         {{ addForm.processing ? 'Creating...' : 'Create Product' }}
                                     </button>
                                 </div>
@@ -217,58 +217,59 @@
                 <div class="fixed inset-0 bg-black/30 backdrop-blur-sm" />
             </TransitionChild>
             <div class="fixed inset-0 overflow-y-auto">
-                <div class="flex min-h-full items-center justify-center p-4">
+                <div class="flex min-h-full items-center justify-center p-2 sm:p-4">
                     <TransitionChild enter="ease-out duration-300" enter-from="opacity-0 scale-95" enter-to="opacity-100 scale-100" leave="ease-in duration-200" leave-from="opacity-100 scale-100" leave-to="opacity-0 scale-95">
-                        <DialogPanel class="w-full max-w-2xl bg-white rounded-xl shadow-2xl">
-                            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4 rounded-t-xl">
-                                <h3 class="text-lg font-semibold text-white">Edit Product</h3>
+                        <DialogPanel class="w-full max-w-2xl bg-white rounded-xl shadow-2xl max-h-[95vh] overflow-y-auto">
+                            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-4 sm:px-6 py-3 sm:py-4 rounded-t-xl sticky top-0 z-10">
+                                <h3 class="text-base sm:text-lg font-semibold text-white">Edit Product</h3>
                             </div>
-                            <form @submit.prevent="submitEditProduct" class="p-6 space-y-4">
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div class="col-span-2">
-                                        <label class="block text-sm font-semibold text-slate-700 mb-2">Product Name</label>
-                                        <input v-model="editForm.name" type="text" required class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" />
+                            <form @submit.prevent="submitEditProduct" class="p-4 sm:p-6 space-y-3 sm:space-y-4">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                                    <div class="sm:col-span-2">
+                                        <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">Product Name</label>
+                                        <input v-model="editForm.name" type="text" required class="w-full px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" />
                                     </div>
-                                    <div class="col-span-2">
-                                        <label class="block text-sm font-semibold text-slate-700 mb-2">Description</label>
-                                        <textarea v-model="editForm.description" rows="3" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"></textarea>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-2">Price (₱)</label>
-                                        <input v-model="editForm.price" type="number" step="0.01" required min="0" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" />
+                                    <div class="sm:col-span-2">
+                                        <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">Description</label>
+                                        <textarea v-model="editForm.description" rows="2" class="w-full px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"></textarea>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-2">Stock</label>
-                                        <input v-model="editForm.stock" type="number" required min="0" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" />
+                                        <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">Price (₱)</label>
+                                        <input v-model="editForm.price" type="number" step="0.01" required min="0" class="w-full px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" />
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-2">Category</label>
-                                        <select v-model="editForm.category" required class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                        <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">Stock</label>
+                                        <input v-model="editForm.stock" type="number" required min="0" class="w-full px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">Category</label>
+                                        <select v-model="editForm.category" required class="w-full px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
                                             <option value="">Select Category</option>
                                             <option v-for="cat in categoryOptions" :key="cat" :value="cat">{{ cat }}</option>
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-2">Change Image</label>
-                                        <input type="file" @change="handleEditImage" accept="image/*" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" />
+                                        <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">Change Image</label>
+                                        <input type="file" @change="handleEditImage" accept="image/*" class="w-full px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+                                        <p class="text-xs text-slate-500 mt-1">JPG, PNG, or WEBP (max 5MB)</p>
                                     </div>
-                                    <div v-if="editImagePreview" class="col-span-2">
-                                        <img :src="editImagePreview" class="w-full h-48 object-cover rounded-lg" alt="Preview">
+                                    <div v-if="editImagePreview" class="sm:col-span-2">
+                                        <img :src="editImagePreview" class="w-full h-32 sm:h-48 object-cover rounded-lg border-2 border-slate-200" alt="Preview">
                                     </div>
-                                    <div class="col-span-2 flex items-center gap-4">
+                                    <div class="sm:col-span-2 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                                         <label class="flex items-center gap-2">
-                                            <input v-model="editForm.is_featured" type="checkbox" class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500">
-                                            <span class="text-sm font-medium text-slate-700">Featured (Max 3)</span>
+                                            <input v-model="editForm.is_featured" type="checkbox" class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500">
+                                            <span class="text-xs sm:text-sm font-medium text-slate-700">Featured (Max 3)</span>
                                         </label>
                                         <label class="flex items-center gap-2">
-                                            <input v-model="editForm.is_active" type="checkbox" class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500">
-                                            <span class="text-sm font-medium text-slate-700">Active</span>
+                                            <input v-model="editForm.is_active" type="checkbox" class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500">
+                                            <span class="text-xs sm:text-sm font-medium text-slate-700">Active</span>
                                         </label>
                                     </div>
                                 </div>
-                                <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
-                                    <button type="button" @click="showEditModal = false" class="px-4 py-2 text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg font-medium transition-colors">Cancel</button>
-                                    <button type="submit" :disabled="editForm.processing" class="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                                <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-slate-200">
+                                    <button type="button" @click="showEditModal = false" class="w-full sm:w-auto px-4 py-2 text-sm sm:text-base text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg font-medium transition-colors">Cancel</button>
+                                    <button type="submit" :disabled="editForm.processing" class="w-full sm:w-auto px-6 py-2 text-sm sm:text-base bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                                         {{ editForm.processing ? 'Saving...' : 'Save Changes' }}
                                     </button>
                                 </div>
