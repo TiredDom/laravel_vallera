@@ -25,7 +25,7 @@ COPY . /var/www
 
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-RUN npm install && npm run build
+RUN npm install --legacy-peer-deps && npm run build
 
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
