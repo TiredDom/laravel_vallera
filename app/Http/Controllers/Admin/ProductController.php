@@ -29,7 +29,7 @@ class ProductController extends Controller
                     'price' => $product->price,
                     'stock' => $product->stock,
                     'category' => $product->category,
-                    'image_path' => $product->image_path,
+                    // 'image_path' => $product->image_path, // Removed to prevent lag
                     'image_url' => $product->image_url,
                     'is_featured' => $product->is_featured,
                     'is_active' => $product->is_active,

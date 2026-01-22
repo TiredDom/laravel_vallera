@@ -27,13 +27,15 @@ class Product extends Model
 
     public function getImageUrlAttribute()
     {
+        // If no image path, return null
         if (!$this->image_path) {
             return null;
         }
 
-        // Check if it's a Base64 string
+        // If it's a Base64 string, return the route to serve it
+        // This prevents sending the huge string in the JSON payload
         if (str_starts_with($this->image_path, 'data:image')) {
-            return $this->image_path;
+            return route('products.image', ['id' => $this->id]);
         }
 
         // Fallback for existing images or if we switch back to storage

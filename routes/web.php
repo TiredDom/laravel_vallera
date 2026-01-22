@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\AuditLogController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::get('/products/{id}/image', [ProductController::class, 'showImage'])->name('products.image');
 
 Route::get('/about', function () {
     return Inertia::render('About');
