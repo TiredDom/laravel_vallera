@@ -139,7 +139,10 @@ function validatePayment() {
 }
 
 function processCheckout() {
-    if (!validatePayment()) return;
+    if (!validatePayment()) {
+        console.log('Validation failed', errors.value);
+        return;
+    }
     isProcessing.value = true;
     let paymentPayload;
     if (selectedMethod.value === 'card') {
@@ -158,6 +161,13 @@ function processCheckout() {
     } else {
         paymentPayload = JSON.parse(JSON.stringify(paymentData.value[selectedMethod.value]));
     }
+
+    console.log('Sending checkout request', {
+        payment_method: selectedMethod.value,
+        payment_data: paymentPayload,
+        delivery: delivery.value
+    });
+
     router.post('/cart/checkout', {
         payment_method: selectedMethod.value,
         payment_data: paymentPayload,
@@ -170,10 +180,19 @@ function processCheckout() {
         },
         onError: (errs) => {
             isProcessing.value = false;
+            console.error('Checkout error', errs);
             if (errs) {
                 Object.keys(errs).forEach(key => {
                     errors.value[key] = errs[key];
                 });
+                // Show generic toast if specific errors aren't clear
+                if (errs.error) {
+                    showToast(errs.error, 'error');
+                } else {
+                    showToast('Please check your input and try again.', 'error');
+                }
+            } else {
+                showToast('An unknown error occurred.', 'error');
             }
         },
         onFinish: () => {

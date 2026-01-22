@@ -19,6 +19,7 @@ const form = useForm({
 watch(() => props.show, (newVal) => {
     if (!newVal) {
         form.reset();
+        form.clearErrors();
     }
 });
 
@@ -77,6 +78,7 @@ function submit() {
                                         <option value="email">Email</option>
                                         <option value="password">Password</option>
                                     </select>
+                                    <p v-if="form.errors.field_name" class="text-red-500 text-xs mt-1">{{ form.errors.field_name }}</p>
                                 </div>
 
                                 <div>
@@ -88,6 +90,7 @@ function submit() {
                                         class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                                         :placeholder="`Enter new ${form.field_name}`"
                                     />
+                                    <p v-if="form.errors.new_value" class="text-red-500 text-xs mt-1">{{ form.errors.new_value }}</p>
                                 </div>
 
                                 <div>
@@ -100,6 +103,7 @@ function submit() {
                                         class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                                         placeholder="Explain why this change is needed..."
                                     ></textarea>
+                                    <p v-if="form.errors.reason" class="text-red-500 text-xs mt-1">{{ form.errors.reason }}</p>
                                     <p class="text-xs text-slate-500 mt-1">{{ form.reason.length }}/500 characters</p>
                                 </div>
 

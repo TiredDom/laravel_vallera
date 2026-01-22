@@ -35,6 +35,8 @@ class CartController extends Controller
                 ];
             })->values();
             $categories = $items->pluck('category')->unique()->filter()->values();
+
+            // Fetch as Models first
             $suggestedProducts = collect();
             if ($categories->isNotEmpty()) {
                 $suggestedProducts = \App\Models\Product::whereIn('category', $categories)
@@ -42,39 +44,34 @@ class CartController extends Controller
                     ->whereNotIn('id', $items->pluck('product_id'))
                     ->inRandomOrder()
                     ->limit(4)
-                    ->get()
-                    ->map(function ($product) {
-                        return [
-                            'id' => $product->id,
-                            'name' => $product->name,
-                            'price' => $product->price,
-                            'category' => $product->category,
-                            'image_url' => $product->image_url,
-                            'description' => $product->description,
-                            'stock' => $product->stock,
-                        ];
-                    });
+                    ->get();
             }
+
             if ($suggestedProducts->count() < 4) {
                 $featuredProducts = \App\Models\Product::where('is_featured', true)
                     ->where('is_active', true)
                     ->whereNotIn('id', $items->pluck('product_id'))
+                    ->whereNotIn('id', $suggestedProducts->pluck('id'))
                     ->inRandomOrder()
                     ->limit(4 - $suggestedProducts->count())
-                    ->get()
-                    ->map(function ($product) {
-                        return [
-                            'id' => $product->id,
-                            'name' => $product->name,
-                            'price' => $product->price,
-                            'category' => $product->category,
-                            'image_url' => $product->image_url,
-                            'description' => $product->description,
-                            'stock' => $product->stock,
-                        ];
-                    });
+                    ->get();
+
                 $suggestedProducts = $suggestedProducts->merge($featuredProducts);
             }
+
+            // Map to array format at the end
+            $suggestedProducts = $suggestedProducts->map(function ($product) {
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'price' => $product->price,
+                    'category' => $product->category,
+                    'image_url' => $product->image_url,
+                    'description' => $product->description,
+                    'stock' => $product->stock,
+                ];
+            });
+
         } else {
             $items = collect([]);
             $suggestedProducts = \App\Models\Product::where('is_featured', true)

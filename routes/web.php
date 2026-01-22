@@ -39,7 +39,10 @@ Route::post('/cart/checkout', [CheckoutController::class, 'store'])->middleware(
 require __DIR__.'/auth.php';
 
 Route::middleware(['auth', 'verified'])->get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    if (auth()->user()->is_admin) {
+        return redirect()->route('admin.dashboard');
+    }
+    return redirect()->route('home');
 })->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
