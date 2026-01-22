@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div class="flex flex-col sm:flex-row gap-2 w-full">
-            <div class="flex-1">
+            <div class="flex-1 min-w-[200px]">
                 <label class="block text-sm font-medium text-slate-700 mb-1">Search</label>
                 <div class="relative">
                     <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -5,16 +5,16 @@
             <div class="space-y-4">
                 <div class="flex items-center justify-between text-zinc-600">
                     <p>Subtotal</p>
-                    <p class="font-semibold text-zinc-900">₱{{ subtotal.toLocaleString() }}</p>
+                    <p class="font-semibold text-zinc-900">₱{{ Number(subtotal).toLocaleString() }}</p>
                 </div>
                 <div class="flex items-center justify-between text-zinc-600">
                     <p>Shipping Fee</p>
-                    <p class="font-semibold text-emerald-600">₱{{ shipping.toLocaleString() }}</p>
+                    <p class="font-semibold text-emerald-600">₱{{ Number(shipping).toLocaleString() }}</p>
                 </div>
                 <div class="border-t-2 border-zinc-200 pt-4">
                     <div class="flex items-center justify-between">
                         <p class="text-lg font-bold text-zinc-900">Total</p>
-                        <p class="text-2xl font-bold text-primary-600">₱{{ total.toLocaleString() }}</p>
+                        <p class="text-2xl font-bold text-primary-600">₱{{ Number(total).toLocaleString() }}</p>
                     </div>
                 </div>
             </div>

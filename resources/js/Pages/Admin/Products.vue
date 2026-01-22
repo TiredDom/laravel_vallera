@@ -21,7 +21,7 @@
                         :search-query="searchQuery"
                         :category-filter="categoryFilter"
                         :sort-by="sortBy"
-                        :categories="categories"
+                        :categories="categoryOptions"
                         :sort-options="sortOptions"
                         :is-refreshing="isRefreshing"
                         @update:searchQuery="updateSearchQuery"

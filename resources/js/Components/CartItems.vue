@@ -22,9 +22,9 @@
                                         <h3 class="text-lg font-bold text-zinc-900 mb-1">{{ item.name }}</h3>
                                         <p class="text-sm text-zinc-500 uppercase tracking-wider">{{ item.category }}</p>
                                     </div>
-                                    <p class="text-xl font-bold text-primary-600 ml-4">₱{{ (item.price * item.quantity).toLocaleString() }}</p>
+                                    <p class="text-xl font-bold text-primary-600 ml-4">₱{{ (Number(item.price) * item.quantity).toLocaleString() }}</p>
                                 </div>
-                                <p class="text-sm text-zinc-600 mt-2">₱{{ item.price.toLocaleString() }} each</p>
+                                <p class="text-sm text-zinc-600 mt-2">₱{{ Number(item.price).toLocaleString() }} each</p>
                             </div>
                             <div class="flex items-center justify-between mt-4">
                                 <div class="flex items-center gap-3 bg-zinc-100 rounded-xl p-1">

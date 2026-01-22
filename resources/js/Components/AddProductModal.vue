@@ -49,7 +49,7 @@
                                     <div class="sm:col-span-2 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                                         <label class="flex items-center gap-2">
                                             <input v-model="form.is_featured" type="checkbox" class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500">
-                                            <span class="text-xs sm:text-sm font-medium text-slate-700">Featured (Max 3)</span>
+                                            <span class="text-xs sm:text-sm font-medium text-slate-700">Featured (Max 8)</span>
                                         </label>
                                         <label class="flex items-center gap-2">
                                             <input v-model="form.is_active" type="checkbox" class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500">

@@ -299,15 +299,15 @@ function formatExpiryDate(event) {
                                 <div class="bg-slate-50 p-4 rounded-lg">
                                     <div class="flex justify-between text-sm mb-2">
                                         <span class="text-slate-600">Subtotal:</span>
-                                        <span class="font-semibold">₱{{ subtotal.toLocaleString() }}</span>
+                                        <span class="font-semibold">₱{{ Number(subtotal).toLocaleString() }}</span>
                                     </div>
                                     <div class="flex justify-between text-sm mb-3">
                                         <span class="text-slate-600">Shipping:</span>
-                                        <span class="font-semibold">₱{{ shipping.toLocaleString() }}</span>
+                                        <span class="font-semibold">₱{{ Number(shipping).toLocaleString() }}</span>
                                     </div>
                                     <div class="flex justify-between text-lg font-bold border-t border-slate-200 pt-3">
                                         <span>Total:</span>
-                                        <span class="text-primary-600">₱{{ total.toLocaleString() }}</span>
+                                        <span class="text-primary-600">₱{{ Number(total).toLocaleString() }}</span>
                                     </div>
                                 </div>
 
@@ -393,7 +393,7 @@ function formatExpiryDate(event) {
                                 <div class="bg-slate-50 p-4 rounded-lg">
                                     <div class="flex justify-between text-lg font-bold">
                                         <span>Total to Pay:</span>
-                                        <span class="text-primary-600">₱{{ total.toLocaleString() }}</span>
+                                        <span class="text-primary-600">₱{{ Number(total).toLocaleString() }}</span>
                                     </div>
                                 </div>
 
