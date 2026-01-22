@@ -3,22 +3,22 @@
 
     <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
         <div class="bg-white border-b border-slate-200 shadow-sm">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-4">
-                        <Link href="/admin/dashboard" class="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-                            <ArrowLeftIcon class="w-6 h-6 text-slate-600" />
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <Link href="/admin/dashboard" class="p-2 hover:bg-slate-100 rounded-lg transition-colors flex-shrink-0">
+                            <ArrowLeftIcon class="w-5 h-5 sm:w-6 sm:h-6 text-slate-600" />
                         </Link>
-                        <div>
-                            <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                        <div class="min-w-0">
+                            <h1 class="text-xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                                 Audit Logs
                             </h1>
-                            <p class="mt-1 text-slate-600">Monitor all system activities and user actions</p>
+                            <p class="mt-1 text-sm sm:text-base text-slate-600">Monitor system activities</p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-lg border border-slate-200">
-                        <ClockIcon class="w-5 h-5 text-slate-400" />
-                        <span class="text-sm font-medium text-slate-700">Total Logs: {{ safeLogsData.total || 0 }}</span>
+                    <div class="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-slate-50 rounded-lg border border-slate-200 self-start sm:self-auto">
+                        <ClockIcon class="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 flex-shrink-0" />
+                        <span class="text-xs sm:text-sm font-medium text-slate-700 whitespace-nowrap">Total: {{ safeLogsData.total || 0 }}</span>
                     </div>
                 </div>
             </div>

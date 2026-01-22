@@ -110,15 +110,14 @@ function getPaymentColor(method) {
     <div class="min-h-screen bg-gradient-to-br from-zinc-50 to-zinc-100">
         <nav class="bg-white shadow-lg border-b border-zinc-200 sticky top-0 z-40">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center h-16">
-                    <Link :href="route('admin.dashboard')" class="flex items-center text-zinc-600 hover:text-primary-600 transition-colors font-medium">
-                        <ArrowLeftIcon class="w-5 h-5 mr-2" />
-                        Back to Dashboard
+                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 sm:h-16 gap-3 sm:gap-0">
+                    <Link :href="route('admin.dashboard')" class="flex items-center text-zinc-600 hover:text-primary-600 transition-colors font-medium text-sm sm:text-base">
+                        <ArrowLeftIcon class="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" />
+                        <span class="whitespace-nowrap">Back to Dashboard</span>
                     </Link>
-                    <div class="flex items-center gap-3">
-                        <span class="text-2xl font-bold bg-gradient-to-r from-primary-600 to-emerald-600 bg-clip-text text-transparent">Order Management</span>
+                    <div class="flex items-center justify-center">
+                        <h1 class="text-lg sm:text-2xl font-bold bg-gradient-to-r from-primary-600 to-emerald-600 bg-clip-text text-transparent text-center">Order Management</h1>
                     </div>
-                    <div class="w-32"></div>
                 </div>
             </div>
         </nav>
