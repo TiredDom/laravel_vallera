@@ -142,7 +142,7 @@ function switchMode() {
         leave-from-class="opacity-100"
         leave-to-class="opacity-0"
     >
-        <div v-if="show" @click.self="close" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div v-if="show" @click.self="close" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm pointer-events-auto">
             <Transition
                 enter-active-class="transition ease-out duration-300"
                 enter-from-class="opacity-0 scale-95"
@@ -151,7 +151,7 @@ function switchMode() {
                 leave-from-class="opacity-100 scale-100"
                 leave-to-class="opacity-0 scale-95"
             >
-                <div v-if="show" class="relative w-full max-w-md bg-white rounded-2xl shadow-2xl">
+                <div v-if="show" class="relative w-full max-w-md bg-white rounded-2xl shadow-2xl z-[110]">
                      <button @click="close" class="absolute top-4 right-4 text-zinc-400 hover:text-zinc-600 transition-colors z-10">
                         <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>

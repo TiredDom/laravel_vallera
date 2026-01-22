@@ -1,13 +1,19 @@
 <script setup>
 import MainLayout from '@/Layouts/MainLayout.vue';
-import ProductCard from '@/Components/ProductCard.vue';
 import ProductDetailModal from '@/Components/ProductDetailModal.vue';
 import AuthModal from '@/Components/AuthModal.vue';
 import ToastNotification from '@/Components/ToastNotification.vue';
 import CheckoutModal from '@/Components/CheckoutModal.vue';
+import CartHeader from '@/Components/CartHeader.vue';
+import SignInPrompt from '@/Components/SignInPrompt.vue';
+import EmptyCart from '@/Components/EmptyCart.vue';
+import CartItems from '@/Components/CartItems.vue';
+import OrderSummary from '@/Components/OrderSummary.vue';
+import SuggestedProducts from '@/Components/SuggestedProducts.vue';
+
 import { Head, Link, usePage, router } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
-import { ShoppingBagIcon, TrashIcon, PlusIcon, MinusIcon, ShieldCheckIcon, TruckIcon, SparklesIcon } from '@heroicons/vue/24/outline';
+import { useCart } from '@/Components/useCart.js';
 
 const props = defineProps({
     suggestedProducts: Array,
@@ -21,6 +27,7 @@ const isCheckoutOpen = ref(false);
 const isProductDetailOpen = ref(false);
 const selectedProduct = ref(null);
 const toast = ref({ show: false, message: '', type: 'success' });
+const { addToCart, isProcessing } = useCart({ showToast, isAuthenticated, isAuthOpen });
 
 watch(() => page.props.cartItems, (newItems) => {
     cartItems.value = newItems || [];
@@ -51,7 +58,11 @@ function handleAuthSuccess(message) {
 }
 
 function handleProductClick(product) {
-    selectedProduct.value = product;
+    // Ensure the product object always has an id property
+    selectedProduct.value = {
+        ...product,
+        id: product.id || product.product_id
+    };
     isProductDetailOpen.value = true;
 }
 
@@ -91,34 +102,26 @@ function checkout() {
 function handleCheckoutSuccess() {
     showToast('Order placed successfully! Redirecting to your orders...', 'success');
     isCheckoutOpen.value = false;
+    setTimeout(() => {
+        router.visit('/orders', { replace: true });
+    }, 1200);
 }
 
 function handleAddToCart(product) {
-    if (!isAuthenticated.value) {
-        isAuthOpen.value = true;
+    addToCart(product);
+}
+
+function updateQuantityValidated({ productId, quantity, stock }) {
+    // Only allow numbers, min 1, max stock
+    if (isNaN(quantity) || quantity < 1) {
+        showToast('Quantity must be at least 1', 'error');
         return;
     }
-    if (!product || !product.id || !product.name || !product.price || product.stock <= 0) {
-        showToast('Invalid product or out of stock', 'error');
+    if (quantity > stock) {
+        showToast('Not enough stock available', 'error');
         return;
     }
-    const payload = {
-        product_id: product.id,
-        name: product.name,
-        price: product.price,
-        quantity: 1,
-        category: product.category
-    };
-    router.post('/cart', payload, {
-        preserveScroll: true,
-        onSuccess: () => {
-            showToast('Product added to cart!', 'success');
-            isProductDetailOpen.value = false;
-        },
-        onError: (errors) => {
-            showToast(errors?.error || 'Failed to add to cart', 'error');
-        }
-    });
+    updateQuantity(productId, quantity);
 }
 </script>
 
@@ -132,208 +135,37 @@ function handleAddToCart(product) {
             @close="hideToast"
         />
 
-        <div class="relative bg-gradient-to-br from-primary-600 via-emerald-700 to-emerald-800 text-white overflow-hidden">
-            <div class="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-16 relative">
-                <div class="max-w-4xl mx-auto text-center" data-aos="fade-up">
-                    <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full mb-4">
-                        <ShoppingBagIcon class="w-4 h-4" />
-                        <span class="text-sm font-medium">{{ cartItems.length }} {{ cartItems.length === 1 ? 'Item' : 'Items' }}</span>
-                    </div>
-                    <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-                        Your Shopping Cart
-                    </h1>
-                    <p class="text-lg text-emerald-100">
-                        Review your items and proceed to secure checkout
-                    </p>
-                </div>
-            </div>
-        </div>
+        <CartHeader :item-count="cartItems.length" />
 
         <div class="bg-zinc-50 min-h-screen">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div v-if="!isAuthenticated" class="max-w-2xl mx-auto text-center py-24 bg-white rounded-2xl shadow-lg" data-aos="fade-up">
-                    <div class="mx-auto w-24 h-24 bg-gradient-to-br from-primary-100 to-emerald-100 rounded-full flex items-center justify-center mb-6">
-                        <ShoppingBagIcon class="w-12 h-12 text-primary-600" />
-                    </div>
-                    <h2 class="text-3xl font-bold text-zinc-900 mb-3">Sign in to view your cart</h2>
-                    <p class="text-lg text-zinc-600 mb-8">Please sign in or create an account to start shopping.</p>
-                    <button @click="isAuthOpen = true" class="inline-flex items-center gap-2 bg-primary-600 text-white font-bold px-8 py-4 rounded-xl hover:bg-primary-700 transition-all hover:scale-105 shadow-lg">
-                        <SparklesIcon class="w-5 h-5" />
-                        Sign In / Sign Up
-                    </button>
-                </div>
+                <SignInPrompt v-if="!isAuthenticated" @open-auth-modal="isAuthOpen = true" />
 
-                <div v-else-if="!cartItems.length" class="max-w-2xl mx-auto text-center py-24 bg-white rounded-2xl shadow-lg" data-aos="fade-up">
-                    <div class="mx-auto w-24 h-24 bg-gradient-to-br from-zinc-100 to-zinc-200 rounded-full flex items-center justify-center mb-6">
-                        <ShoppingBagIcon class="w-12 h-12 text-zinc-400" />
-                    </div>
-                    <h2 class="text-3xl font-bold text-zinc-900 mb-3">Your cart is empty</h2>
-                    <p class="text-lg text-zinc-600 mb-8">Discover our collection of premium furniture</p>
-                    <Link href="/products" class="inline-flex items-center gap-2 bg-primary-600 text-white font-bold px-8 py-4 rounded-xl hover:bg-primary-700 transition-all hover:scale-105 shadow-lg">
-                        Continue Shopping
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                        </svg>
-                    </Link>
-                </div>
+                <EmptyCart v-else-if="!cartItems.length" />
 
                 <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-8" data-aos="fade-up">
-                    <div class="lg:col-span-2 space-y-4">
-                        <div class="bg-white rounded-2xl shadow-lg border border-zinc-200 overflow-hidden">
-                            <div class="bg-gradient-to-r from-zinc-50 to-white px-6 py-4 border-b border-zinc-200">
-                                <h2 class="text-xl font-bold text-zinc-900">Cart Items</h2>
-                            </div>
-                            <ul role="list" class="divide-y divide-zinc-200">
-                                <li v-for="item in cartItems" :key="item.product_id || item.id" class="p-6 hover:bg-zinc-50 transition-colors group">
-                                    <div class="flex gap-6">
-                                        <div class="flex-shrink-0 w-24 h-24 sm:w-32 sm:h-32 rounded-xl overflow-hidden shadow-sm group-hover:shadow-md transition-shadow">
-                                            <img v-if="item.image_url" :src="item.image_url" :alt="item.name" class="w-full h-full object-cover">
-                                            <div v-else class="w-full h-full bg-gradient-to-br from-zinc-100 to-zinc-200 flex items-center justify-center">
-                                                <svg class="w-12 h-12 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                </svg>
-                                            </div>
-                                        </div>
-                                        <div class="flex-1 flex flex-col justify-between">
-                                            <div>
-                                                <div class="flex justify-between">
-                                                    <div>
-                                                        <h3 class="text-lg font-bold text-zinc-900 mb-1">{{ item.name }}</h3>
-                                                        <p class="text-sm text-zinc-500 uppercase tracking-wider">{{ item.category }}</p>
-                                                    </div>
-                                                    <p class="text-xl font-bold text-primary-600 ml-4">₱{{ (item.price * item.quantity).toLocaleString() }}</p>
-                                                </div>
-                                                <p class="text-sm text-zinc-600 mt-2">₱{{ item.price.toLocaleString() }} each</p>
-                                            </div>
-                                            <div class="flex items-center justify-between mt-4">
-                                                <div class="flex items-center gap-3 bg-zinc-100 rounded-xl p-1">
-                                                    <button @click="updateQuantity(item.product_id || item.id, item.quantity - 1)" :disabled="item.quantity <= 1" class="w-10 h-10 rounded-lg bg-white hover:bg-primary-600 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-zinc-900 transition-all flex items-center justify-center shadow-sm">
-                                                        <MinusIcon class="w-4 h-4" />
-                                                    </button>
-                                                    <span class="min-w-[60px] text-center font-bold text-zinc-900">{{ item.quantity }}</span>
-                                                    <button @click="updateQuantity(item.product_id || item.id, item.quantity + 1)" class="w-10 h-10 rounded-lg bg-white hover:bg-primary-600 hover:text-white transition-all flex items-center justify-center shadow-sm">
-                                                        <PlusIcon class="w-4 h-4" />
-                                                    </button>
-                                                </div>
-                                                <button type="button" class="inline-flex items-center gap-2 font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 px-4 py-2 rounded-lg transition-colors" @click="removeItem(item.product_id || item.id)">
-                                                    <TrashIcon class="w-4 h-4" />
-                                                    Remove
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div class="bg-white rounded-2xl shadow-lg border border-zinc-200 p-6">
-                            <h3 class="text-lg font-bold text-zinc-900 mb-4">Why Shop With Us?</h3>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div class="flex items-center gap-3 p-4 bg-blue-50 rounded-xl border border-blue-100">
-                                    <div class="flex-shrink-0 w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                                        <ShieldCheckIcon class="w-6 h-6 text-white" />
-                                    </div>
-                                    <div>
-                                        <p class="font-semibold text-zinc-900 text-sm">Secure Payment</p>
-                                        <p class="text-xs text-zinc-600">100% Protected</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-3 p-4 bg-emerald-50 rounded-xl border border-emerald-100">
-                                    <div class="flex-shrink-0 w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
-                                        <TruckIcon class="w-6 h-6 text-white" />
-                                    </div>
-                                    <div>
-                                        <p class="font-semibold text-zinc-900 text-sm">Free Shipping</p>
-                                        <p class="text-xs text-zinc-600">All Orders</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="lg:col-span-1">
-                        <div class="sticky top-24 space-y-4">
-                            <div class="bg-white rounded-2xl shadow-lg border border-zinc-200 p-6">
-                                <h2 class="text-xl font-bold text-zinc-900 mb-6">Order Summary</h2>
-                                <div class="space-y-4">
-                                    <div class="flex items-center justify-between text-zinc-600">
-                                        <p>Subtotal</p>
-                                        <p class="font-semibold text-zinc-900">₱{{ subtotal.toLocaleString() }}</p>
-                                    </div>
-                                    <div class="flex items-center justify-between text-zinc-600">
-                                        <p>Shipping Fee</p>
-                                        <p class="font-semibold text-emerald-600">₱{{ shipping.toLocaleString() }}</p>
-                                    </div>
-                                    <div class="border-t-2 border-zinc-200 pt-4">
-                                        <div class="flex items-center justify-between">
-                                            <p class="text-lg font-bold text-zinc-900">Total</p>
-                                            <p class="text-2xl font-bold text-primary-600">₱{{ total.toLocaleString() }}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="mt-6">
-                                    <button class="w-full bg-gradient-to-r from-primary-600 to-emerald-600 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all" @click="checkout">
-                                        Proceed to Checkout
-                                    </button>
-                                </div>
-                                <Link href="/products" class="block text-center mt-4 text-primary-600 hover:text-primary-700 font-semibold text-sm">
-                                    Continue Shopping
-                                </Link>
-                            </div>
-
-                            <div class="bg-gradient-to-br from-zinc-50 to-white rounded-2xl border border-zinc-200 p-6">
-                                <h3 class="text-sm font-bold text-zinc-900 mb-3 uppercase tracking-wider">Secure Checkout</h3>
-                                <div class="space-y-3 text-sm text-zinc-600">
-                                    <div class="flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                        </svg>
-                                        <span>SSL Encrypted Payment</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                        </svg>
-                                        <span>30-Day Return Policy</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                        </svg>
-                                        <span>5-Year Warranty</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div v-if="suggestedProducts && suggestedProducts.length > 0" class="bg-white py-16">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-12" data-aos="fade-up">
-                    <h2 class="text-3xl md:text-4xl font-bold text-zinc-900 mb-3">You Might Also Like</h2>
-                    <p class="text-lg text-zinc-600">Complete your home with these handpicked items</p>
-                </div>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                    <ProductCard
-                        v-for="(item, index) in suggestedProducts"
-                        :key="item.id"
-                        :id="item.id"
-                        :name="item.name"
-                        :price="item.price"
-                        :category="item.category"
-                        :stock="item.stock"
-                        :image="item.image_url"
-                        :delay="index * 100"
-                        @add-to-cart="handleAddToCart"
-                        @click="handleProductClick(item)"
+                    <CartItems
+                        :cart-items="cartItems"
+                        @update-quantity="updateQuantityValidated"
+                        @remove-item="removeItem"
                     />
+                    <div class="lg:col-span-1">
+                        <OrderSummary
+                            :subtotal="subtotal"
+                            :shipping="shipping"
+                            :total="total"
+                            @checkout="checkout"
+                        />
+                    </div>
                 </div>
             </div>
         </div>
+
+        <SuggestedProducts
+            :suggested-products="suggestedProducts"
+            @add-to-cart="handleAddToCart"
+            @product-click="handleProductClick"
+        />
 
         <ProductDetailModal
             v-if="selectedProduct"

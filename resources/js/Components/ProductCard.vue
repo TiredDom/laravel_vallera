@@ -5,6 +5,7 @@
         :class="{ 'opacity-75': stock === 0 }"
         data-aos="fade-up"
         :data-aos-delay="delay"
+        @mouseleave="handleMouseLeave"
     >
         <div class="relative h-64 w-full bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden">
             <img
@@ -29,7 +30,7 @@
             </div>
             <div v-if="stock > 0" class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             <button
-                v-if="stock > 0"
+                v-if="showAddToCart && stock > 0"
                 @click.stop="handleAddToCart"
                 class="absolute bottom-4 right-4 p-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-full shadow-lg hover:from-emerald-700 hover:to-teal-700 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
                 aria-label="Add to Cart"
@@ -71,6 +72,8 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
+
 const emit = defineEmits(['add-to-cart', 'view-details']);
 
 const props = defineProps({
@@ -99,20 +102,26 @@ const props = defineProps({
     }
 });
 
+const showAddToCart = ref(true);
+
 function handleAddToCart(event) {
     event.stopPropagation();
     if (props.stock <= 0) return;
 
     emit('add-to-cart', {
-        product_id: props.id,
+        id: props.id,
         name: props.name,
         price: props.price,
-        quantity: 1,
+        stock: props.stock,
         category: props.category
     });
 }
 
 function handleViewDetails() {
     emit('view-details');
+}
+
+function handleMouseLeave() {
+    showAddToCart.value = true;
 }
 </script>

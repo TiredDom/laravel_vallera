@@ -64,8 +64,8 @@ function validateDelivery() {
     delivery.value.postalCode = sanitizeInput(delivery.value.postalCode);
     delivery.value.notes = sanitizeInput(delivery.value.notes);
 
-    if (!delivery.value.name || delivery.value.name.length < 2) {
-        errors.value.name = 'Full name is required (minimum 2 characters)';
+    if (!delivery.value.name || delivery.value.name.length < 2 || !/^[A-Za-z ]+$/.test(delivery.value.name)) {
+        errors.value.name = 'Full name is required (letters and spaces only, min 2 characters)';
     }
     if (!delivery.value.phone || !/^(09|\+639)\d{9}$/.test(delivery.value.phone)) {
         errors.value.phone = 'Valid Philippine mobile number required (09XXXXXXXXX)';
@@ -73,11 +73,11 @@ function validateDelivery() {
     if (!delivery.value.address || delivery.value.address.length < 10) {
         errors.value.address = 'Complete address is required (minimum 10 characters)';
     }
-    if (!delivery.value.city || delivery.value.city.length < 2) {
-        errors.value.city = 'City is required';
+    if (!delivery.value.city || delivery.value.city.length < 2 || !/^[A-Za-z ]+$/.test(delivery.value.city)) {
+        errors.value.city = 'City is required (letters and spaces only, min 2 characters)';
     }
-    if (!delivery.value.province || delivery.value.province.length < 2) {
-        errors.value.province = 'Province is required';
+    if (!delivery.value.province || delivery.value.province.length < 2 || !/^[A-Za-z ]+$/.test(delivery.value.province)) {
+        errors.value.province = 'Province is required (letters and spaces only, min 2 characters)';
     }
     if (!delivery.value.postalCode || !/^\d{4}$/.test(delivery.value.postalCode)) {
         errors.value.postalCode = 'Postal code required (4 digits)';
@@ -102,7 +102,7 @@ function validatePayment() {
     if (selectedMethod.value === 'gcash') {
         paymentData.value.gcash.phone = sanitizeInput(paymentData.value.gcash.phone);
         if (!paymentData.value.gcash.phone || !/^(09|\+639)\d{9}$/.test(paymentData.value.gcash.phone)) {
-            errors.value.gcashPhone = 'Valid GCash number required';
+            errors.value.gcashPhone = 'Valid GCash number required (09XXXXXXXXX)';
         }
     } else if (selectedMethod.value === 'card') {
         paymentData.value.card.cardNumber = sanitizeInput(paymentData.value.card.cardNumber);
@@ -112,8 +112,8 @@ function validatePayment() {
         if (!paymentData.value.card.cardNumber || !/^\d{16}$/.test(paymentData.value.card.cardNumber.replace(/\s/g, ''))) {
             errors.value.cardNumber = 'Valid 16-digit card number required';
         }
-        if (!paymentData.value.card.cardName || paymentData.value.card.cardName.length < 3) {
-            errors.value.cardName = 'Cardholder name required';
+        if (!paymentData.value.card.cardName || paymentData.value.card.cardName.length < 3 || !/^[A-Za-z ]+$/.test(paymentData.value.card.cardName)) {
+            errors.value.cardName = 'Cardholder name required (letters and spaces only, min 3 characters)';
         }
         if (!paymentData.value.card.expiryDate || !/^\d{2}\/\d{2}$/.test(paymentData.value.card.expiryDate)) {
             errors.value.expiryDate = 'Valid expiry date required (MM/YY)';
@@ -128,11 +128,11 @@ function validatePayment() {
         if (!paymentData.value.bank.bankName || paymentData.value.bank.bankName.length < 3) {
             errors.value.bankName = 'Bank name required';
         }
-        if (!paymentData.value.bank.accountNumber || paymentData.value.bank.accountNumber.length < 6) {
-            errors.value.accountNumber = 'Valid account number required';
+        if (!paymentData.value.bank.accountNumber || !/^\d{10,20}$/.test(paymentData.value.bank.accountNumber)) {
+            errors.value.accountNumber = 'Valid account number required (10-20 digits)';
         }
-        if (!paymentData.value.bank.accountName || paymentData.value.bank.accountName.length < 3) {
-            errors.value.accountName = 'Account holder name required';
+        if (!paymentData.value.bank.accountName || paymentData.value.bank.accountName.length < 3 || !/^[A-Za-z ]+$/.test(paymentData.value.bank.accountName)) {
+            errors.value.accountName = 'Account holder name required (letters and spaces only, min 3 characters)';
         }
     }
     return Object.keys(errors.value).length === 0;
@@ -141,19 +141,26 @@ function validatePayment() {
 function processCheckout() {
     if (!validatePayment()) return;
     isProcessing.value = true;
-    if (selectedMethod.value === 'gcash') {
-        setTimeout(() => {
-            isProcessing.value = false;
-            emit('success');
-            emit('close');
-            showToast('GCash payment processed successfully!', 'success');
-            resetForm();
-        }, 2000);
-        return;
+    let paymentPayload;
+    if (selectedMethod.value === 'card') {
+        paymentPayload = {
+            holder: paymentData.value.card.cardName,
+            number: paymentData.value.card.cardNumber.replace(/\s/g, ''),
+            expiry: paymentData.value.card.expiryDate,
+            cvc: paymentData.value.card.cvv
+        };
+    } else if (selectedMethod.value === 'bank') {
+        paymentPayload = {
+            account_name: paymentData.value.bank.accountName,
+            account_number: paymentData.value.bank.accountNumber,
+            reference: paymentData.value.bank.reference || 'BANKREF' + Date.now()
+        };
+    } else {
+        paymentPayload = JSON.parse(JSON.stringify(paymentData.value[selectedMethod.value]));
     }
     router.post('/cart/checkout', {
         payment_method: selectedMethod.value,
-        payment_data: JSON.parse(JSON.stringify(paymentData.value[selectedMethod.value])),
+        payment_data: paymentPayload,
         delivery: JSON.parse(JSON.stringify(delivery.value))
     }, {
         onSuccess: () => {
@@ -161,10 +168,12 @@ function processCheckout() {
             emit('close');
             resetForm();
         },
-        onError: (errors) => {
+        onError: (errs) => {
             isProcessing.value = false;
-            if (errors.error) {
-                showToast(errors.error, 'error');
+            if (errs) {
+                Object.keys(errs).forEach(key => {
+                    errors.value[key] = errs[key];
+                });
             }
         },
         onFinish: () => {

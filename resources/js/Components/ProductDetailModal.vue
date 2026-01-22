@@ -8,13 +8,23 @@ const props = defineProps({
     isAdmin: {
         type: Boolean,
         default: false
+    },
+    isAuthOpen: {
+        type: Boolean,
+        default: false
     }
 });
 
 const emit = defineEmits(['close', 'add-to-cart']);
 
 function handleAddToCart() {
-    emit('add-to-cart', props.product);
+    emit('add-to-cart', {
+        id: props.product.id,
+        name: props.product.name,
+        price: props.product.price,
+        stock: props.product.stock,
+        category: props.product.category
+    });
 }
 
 function getStockStatus(stock) {
@@ -26,7 +36,7 @@ function getStockStatus(stock) {
 
 <template>
     <TransitionRoot :show="show" as="template">
-        <Dialog @close="$emit('close')" class="relative z-50">
+        <Dialog @close="$emit('close')" :class="['relative z-50', isAuthOpen ? 'pointer-events-none' : '']">
             <TransitionChild
                 enter="ease-out duration-300"
                 enter-from="opacity-0"
@@ -48,11 +58,11 @@ function getStockStatus(stock) {
                         leave-from="opacity-100 scale-100"
                         leave-to="opacity-0 scale-95"
                     >
-                        <DialogPanel class="w-full max-w-4xl bg-white rounded-2xl shadow-2xl overflow-hidden">
+                        <DialogPanel :class="[isAuthOpen ? 'pointer-events-none select-none opacity-60' : '']" class="w-full max-w-4xl bg-white rounded-2xl shadow-2xl overflow-hidden">
                             <div class="relative">
                                 <button
                                     @click="$emit('close')"
-                                    class="absolute top-4 right-4 z-10 p-2 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all hover:scale-110"
+                                    :class="['absolute top-4 right-4 z-10 p-2 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all hover:scale-110', isAuthOpen ? 'pointer-events-none' : '']"
                                 >
                                     <XMarkIcon class="w-6 h-6 text-slate-600" />
                                 </button>
