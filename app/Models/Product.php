@@ -12,7 +12,7 @@ class Product extends Model
         'price',
         'stock',
         'category',
-        'image_path',
+        'image_path', // This was missing
         'is_featured',
         'is_active',
     ];
