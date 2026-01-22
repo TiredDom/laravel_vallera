@@ -14,7 +14,7 @@ const faqs = ref([
     },
     {
         q: 'How can I track my order?',
-        a: 'Once your order has shipped, you will receive an email with a tracking number and a link to the carrier\'s website. You can use this information to track the status of your delivery.',
+        a: 'You can easily track the status of your order directly from your profile page. Simply log in, go to "My Orders", and you will see real-time updates on your delivery status.',
         open: false
     },
     {
