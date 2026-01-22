@@ -1,6 +1,5 @@
 <template>
     <Head title="Product Management" />
-
     <ToastNotification :show="toast.show" :message="toast.message" :type="toast.type" @close="toast.show = false" />
 
     <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -36,6 +35,7 @@
                         </svg>
                         <span>Add Product</span>
                     </button>
+                    </div>
                 </div>
             </div>
         </div>
