@@ -11,15 +11,15 @@
                         <img
                             src="/images/category-living-room.jpg"
                             alt="Sofas"
-                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-1"
                             @error="$event.target.style.display='none'"
                         />
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent group-hover:from-black/90 transition-all duration-500"></div>
-                        <div class="absolute inset-0 flex flex-col justify-end p-8">
-                            <h3 class="text-3xl font-bold text-white mb-2 transform group-hover:translate-y-[-8px] transition-transform duration-300">Sofas</h3>
-                            <p class="text-white/80 text-sm mb-4 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">Sectionals, couches & loveseats</p>
-                            <div class="flex items-center text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <span>Shop Now</span>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500"></div>
+                        <div class="absolute inset-0 flex flex-col justify-end p-8 transform transition-transform duration-500 group-hover:translate-y-[-8px]">
+                            <h3 class="text-3xl font-bold text-white mb-2">Sofas</h3>
+                            <p class="text-white/90 text-sm mb-4 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-75">Sectionals, couches & loveseats</p>
+                            <div class="flex items-center text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                                <span class="border-b border-white/50 pb-0.5">Shop Collection</span>
                                 <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                                 </svg>
@@ -32,15 +32,15 @@
                         <img
                             src="/images/category-dining.jpg"
                             alt="Tables"
-                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-1"
                             @error="$event.target.style.display='none'"
                         />
-                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent group-hover:from-black/90 transition-all duration-500"></div>
-                        <div class="absolute inset-0 flex flex-col justify-end p-8">
-                            <h3 class="text-3xl font-bold text-white mb-2 transform group-hover:translate-y-[-8px] transition-transform duration-300">Tables</h3>
-                            <p class="text-white/80 text-sm mb-4 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">Dining, coffee & side tables</p>
-                            <div class="flex items-center text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <span>Shop Now</span>
+                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500"></div>
+                        <div class="absolute inset-0 flex flex-col justify-end p-8 transform transition-transform duration-500 group-hover:translate-y-[-8px]">
+                            <h3 class="text-3xl font-bold text-white mb-2">Tables</h3>
+                            <p class="text-white/90 text-sm mb-4 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-75">Dining, coffee & side tables</p>
+                            <div class="flex items-center text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                                <span class="border-b border-white/50 pb-0.5">Shop Collection</span>
                                 <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                                 </svg>
@@ -53,15 +53,15 @@
                         <img
                             src="/images/category-bedroom.jpg"
                             alt="Beds"
-                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-1"
                             @error="$event.target.style.display='none'"
                         />
-                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent group-hover:from-black/90 transition-all duration-500"></div>
-                        <div class="absolute inset-0 flex flex-col justify-end p-8">
-                            <h3 class="text-3xl font-bold text-white mb-2 transform group-hover:translate-y-[-8px] transition-transform duration-300">Beds</h3>
-                            <p class="text-white/80 text-sm mb-4 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">Bed frames & foundations</p>
-                            <div class="flex items-center text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <span>Shop Now</span>
+                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500"></div>
+                        <div class="absolute inset-0 flex flex-col justify-end p-8 transform transition-transform duration-500 group-hover:translate-y-[-8px]">
+                            <h3 class="text-3xl font-bold text-white mb-2">Beds</h3>
+                            <p class="text-white/90 text-sm mb-4 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-75">Bed frames & foundations</p>
+                            <div class="flex items-center text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                                <span class="border-b border-white/50 pb-0.5">Shop Collection</span>
                                 <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                                 </svg>

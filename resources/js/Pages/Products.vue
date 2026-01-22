@@ -8,6 +8,7 @@ import CollectionHero from '@/Components/Collection/CollectionHero.vue';
 import CollectionFilters from '@/Components/Collection/CollectionFilters.vue';
 import CollectionGrid from '@/Components/Collection/CollectionGrid.vue';
 import CollectionCTA from '@/Components/Collection/CollectionCTA.vue';
+import FilterDrawer from '@/Components/Collection/FilterDrawer.vue';
 import { Head, usePage } from '@inertiajs/vue3';
 import { useCart } from '@/Components/useCart.js';
 
@@ -22,6 +23,7 @@ const filters = ['All', 'Sofas', 'Chairs', 'Tables', 'Beds', 'Storage', 'Desks']
 const activeFilter = ref('All');
 const isAuthOpen = ref(false);
 const showDetailModal = ref(false);
+const isFilterDrawerOpen = ref(false);
 const selectedProduct = ref(null);
 const toast = ref({ show: false, message: '', type: 'success' });
 const sortBy = ref('name');
@@ -90,6 +92,8 @@ const filteredProducts = computed(() => {
         filtered = [...filtered].sort((a, b) => b.price - a.price);
     } else if (sortBy.value === 'name') {
         filtered = [...filtered].sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortBy.value === 'name-desc') {
+        filtered = [...filtered].sort((a, b) => b.name.localeCompare(a.name));
     }
 
     return filtered;
@@ -122,6 +126,7 @@ const stats = computed(() => ({
         :filters="filters"
         v-model:activeFilter="activeFilter"
         v-model:sortBy="sortBy"
+        @openDrawer="isFilterDrawerOpen = true"
     />
 
     <CollectionGrid
@@ -139,6 +144,16 @@ const stats = computed(() => ({
         :is-auth-open="isAuthOpen"
         @close="showDetailModal = false"
         @add-to-cart="handleAddToCart"
+    />
+
+    <FilterDrawer
+        :show="isFilterDrawerOpen"
+        :filters="filters"
+        :active-filter="activeFilter"
+        :sort-by="sortBy"
+        @close="isFilterDrawerOpen = false"
+        @update:activeFilter="activeFilter = $event"
+        @update:sortBy="sortBy = $event"
     />
 
     <AuthModal :show="isAuthOpen" @close="isAuthOpen = false" @auth-success="handleAuthSuccess" />

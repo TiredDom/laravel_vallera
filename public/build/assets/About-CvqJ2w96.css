@@ -1,0 +1,1 @@
+@keyframes float-10415dbd{0%,to{transform:translateY(0)}50%{transform:translateY(-10px)}}@keyframes pulse-slow-10415dbd{0%,to{opacity:.5;transform:scale(1)}50%{opacity:.8;transform:scale(1.05)}}.animate-float[data-v-10415dbd]{animation:float-10415dbd 6s ease-in-out infinite}.animate-pulse-slow[data-v-10415dbd]{animation:pulse-slow-10415dbd 4s ease-in-out infinite}

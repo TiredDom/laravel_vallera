@@ -110,16 +110,6 @@ function getStockStatus(stock) {
 
                                             <div class="space-y-4 mb-8">
                                                 <div class="flex items-center justify-between py-3 border-b border-slate-200">
-                                                    <span class="text-sm font-medium text-slate-600">Availability</span>
-                                                    <span
-                                                        class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold"
-                                                        :class="getStockStatus(product?.stock).color"
-                                                    >
-                                                        {{ getStockStatus(product?.stock).label }}
-                                                    </span>
-                                                </div>
-
-                                                <div class="flex items-center justify-between py-3 border-b border-slate-200">
                                                     <span class="text-sm font-medium text-slate-600">Stock Quantity</span>
                                                     <span class="text-sm font-bold text-slate-900">{{ product?.stock }} units</span>
                                                 </div>

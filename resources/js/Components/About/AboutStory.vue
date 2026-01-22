@@ -31,19 +31,36 @@ import { Link } from '@inertiajs/vue3';
                         </Link>
                     </div>
                 </div>
-                <div class="relative" data-aos="fade-left" data-aos-delay="200">
-                    <div class="aspect-[4/5] w-full bg-gradient-to-br from-zinc-200 to-zinc-300 rounded-2xl overflow-hidden shadow-2xl">
+                <div class="relative group" data-aos="fade-left" data-aos-delay="200">
+                    <div class="aspect-[4/5] w-full bg-gradient-to-br from-zinc-200 to-zinc-300 rounded-2xl overflow-hidden shadow-2xl animate-float">
                         <img
                             src="/images/about-workshop.jpg"
                             alt="Vallera Furniture Workshop"
-                            class="w-full h-full object-cover"
+                            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                             @error="$event.target.style.display='none'; $event.target.parentElement.classList.add('flex', 'items-center', 'justify-center')"
                         />
                     </div>
-                    <div class="absolute -bottom-6 -right-6 w-64 h-64 bg-primary-600/20 rounded-2xl blur-3xl -z-10"></div>
-                    <div class="absolute -top-6 -left-6 w-64 h-64 bg-primary-400/20 rounded-2xl blur-3xl -z-10"></div>
+                    <div class="absolute -bottom-6 -right-6 w-64 h-64 bg-primary-600/20 rounded-2xl blur-3xl -z-10 animate-pulse-slow"></div>
+                    <div class="absolute -top-6 -left-6 w-64 h-64 bg-primary-400/20 rounded-2xl blur-3xl -z-10 animate-pulse-slow" style="animation-delay: 1s;"></div>
                 </div>
             </div>
         </div>
     </section>
 </template>
+
+<style scoped>
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+@keyframes pulse-slow {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.05); }
+}
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+.animate-pulse-slow {
+    animation: pulse-slow 4s ease-in-out infinite;
+}
+</style>

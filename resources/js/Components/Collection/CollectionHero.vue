@@ -1,5 +1,5 @@
 <script setup>
-import { SparklesIcon, Squares2X2Icon, FunnelIcon } from '@heroicons/vue/24/outline';
+import { Squares2X2Icon, FunnelIcon } from '@heroicons/vue/24/outline';
 
 defineProps({
     stats: Object,
@@ -13,10 +13,6 @@ defineProps({
         <div class="absolute inset-0 bg-[url('/grid.svg')] opacity-20"></div>
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
             <div class="max-w-4xl mx-auto text-center" data-aos="fade-up">
-                <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
-                    <SparklesIcon class="w-4 h-4" />
-                    <span class="text-sm font-medium">{{ stats.newArrivals }} New Arrivals</span>
-                </div>
                 <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-6">
                     Discover Your Perfect Piece
                 </h1>

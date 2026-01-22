@@ -11,7 +11,7 @@ class HomeController extends Controller
     {
         $featuredProducts = Product::where('is_active', true)
             ->where('is_featured', true)
-            ->limit(3)
+            ->limit(8)
             ->get();
 
         return Inertia::render('Landing', [
