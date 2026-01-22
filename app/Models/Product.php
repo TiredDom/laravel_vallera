@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Product extends Model
 {
@@ -12,7 +13,7 @@ class Product extends Model
         'price',
         'stock',
         'category',
-        'image_path', // This was missing
+        'image_path',
         'is_featured',
         'is_active',
     ];
@@ -26,6 +27,20 @@ class Product extends Model
 
     public function getImageUrlAttribute()
     {
-        return $this->image_path ? asset('storage/' . $this->image_path) : null;
+        if (!$this->image_path) {
+            return null;
+        }
+
+        // Check if it's a Base64 string
+        if (str_starts_with($this->image_path, 'data:image')) {
+            return $this->image_path;
+        }
+
+        // Fallback for existing images or if we switch back to storage
+        if (filter_var($this->image_path, FILTER_VALIDATE_URL)) {
+            return $this->image_path;
+        }
+
+        return asset('storage/' . $this->image_path);
     }
 }

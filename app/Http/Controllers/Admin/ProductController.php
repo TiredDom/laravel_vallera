@@ -60,9 +60,12 @@ class ProductController extends Controller
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $imageName = 'product-' . time() . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
-            $imagePath = $image->storeAs('products', $imageName, 'public');
-            $dataToSave['image_path'] = $imagePath;
+            // Convert to Base64
+            $path = $image->getRealPath();
+            $type = $image->getMimeType();
+            $data = file_get_contents($path);
+            $base64 = 'data:' . $type . ';base64,' . base64_encode($data);
+            $dataToSave['image_path'] = $base64;
         }
 
         if ($request->is_featured) {
@@ -103,14 +106,13 @@ class ProductController extends Controller
         $dataToSave = $validated;
 
         if ($request->hasFile('image')) {
-            if ($product->image_path) {
-                Storage::disk('public')->delete($product->image_path);
-            }
-
             $image = $request->file('image');
-            $imageName = 'product-' . time() . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
-            $imagePath = $image->storeAs('products', $imageName, 'public');
-            $dataToSave['image_path'] = $imagePath;
+            // Convert to Base64
+            $path = $image->getRealPath();
+            $type = $image->getMimeType();
+            $data = file_get_contents($path);
+            $base64 = 'data:' . $type . ';base64,' . base64_encode($data);
+            $dataToSave['image_path'] = $base64;
         }
 
         if ($request->is_featured && !$product->is_featured) {
@@ -131,9 +133,9 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        if ($product->image_path) {
-            Storage::disk('public')->delete($product->image_path);
-        }
+        // No need to delete file from storage as it's in DB now
+        // But if we had mixed storage, we might want to check if it's a path or base64
+        // For simplicity, we just delete the record
 
         $productName = $product->name;
         $product->delete();
