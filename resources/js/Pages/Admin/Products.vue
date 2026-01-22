@@ -179,7 +179,7 @@
                                             Image <span class="text-red-500">*</span>
                                         </label>
                                         <input type="file" @change="handleAddImage" accept="image/*" required class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all" />
-                                        <p class="text-xs text-slate-500 mt-1">Required: JPG, PNG, or WEBP (max 2MB)</p>
+                                        <p class="text-xs text-slate-500 mt-1">Required: JPG, PNG, or WEBP (max 5MB)</p>
                                     </div>
                                     <div v-if="addImagePreview" class="col-span-2">
                                         <img :src="addImagePreview" class="w-full h-48 object-cover rounded-lg" alt="Preview">
@@ -417,6 +417,12 @@ function openEditModal(product) {
 function handleAddImage(event) {
     const file = event.target.files[0];
     if (file) {
+        const maxSize = 5 * 1024 * 1024;
+        if (file.size > maxSize) {
+            toast.value = { show: true, message: 'Image must be less than 5MB', type: 'error' };
+            event.target.value = '';
+            return;
+        }
         addForm.image = file;
         const reader = new FileReader();
         reader.onload = (e) => addImagePreview.value = e.target.result;
@@ -427,6 +433,12 @@ function handleAddImage(event) {
 function handleEditImage(event) {
     const file = event.target.files[0];
     if (file) {
+        const maxSize = 5 * 1024 * 1024;
+        if (file.size > maxSize) {
+            toast.value = { show: true, message: 'Image must be less than 5MB', type: 'error' };
+            event.target.value = '';
+            return;
+        }
         editForm.image = file;
         const reader = new FileReader();
         reader.onload = (e) => editImagePreview.value = e.target.result;
@@ -447,6 +459,11 @@ function submitAddProduct() {
             showAddModal.value = false;
             addForm.reset();
             addImagePreview.value = null;
+            toast.value = { show: true, message: 'Product created successfully', type: 'success' };
+        },
+        onError: (errors) => {
+            const firstError = Object.values(errors)[0];
+            toast.value = { show: true, message: firstError || 'Failed to create product', type: 'error' };
         },
     });
 }
@@ -459,6 +476,11 @@ function submitEditProduct() {
             showEditModal.value = false;
             editForm.reset();
             editImagePreview.value = null;
+            toast.value = { show: true, message: 'Product updated successfully', type: 'success' };
+        },
+        onError: (errors) => {
+            const firstError = Object.values(errors)[0];
+            toast.value = { show: true, message: firstError || 'Failed to update product', type: 'error' };
         },
     });
 }

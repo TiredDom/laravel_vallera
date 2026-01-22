@@ -493,9 +493,13 @@ class AdminController extends Controller
             'price' => ['required', 'numeric', 'min:0', 'max:9999999.99'],
             'stock' => ['required', 'integer', 'min:0', 'max:999999'],
             'category' => ['required', 'string', 'max:100'],
-            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'is_featured' => ['boolean'],
             'is_active' => ['boolean'],
+        ], [
+            'image.max' => 'The image must not be larger than 5MB.',
+            'image.image' => 'The file must be an image.',
+            'image.mimes' => 'The image must be a file of type: jpg, jpeg, png, webp.',
         ]);
 
         $validated['name'] = trim($validated['name']);
@@ -533,9 +537,13 @@ class AdminController extends Controller
             'price' => ['required', 'numeric', 'min:0', 'max:9999999.99'],
             'stock' => ['required', 'integer', 'min:0', 'max:999999'],
             'category' => ['required', 'string', 'max:100'],
-            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'is_featured' => ['boolean'],
             'is_active' => ['boolean'],
+        ], [
+            'image.max' => 'The image must not be larger than 5MB.',
+            'image.image' => 'The file must be an image.',
+            'image.mimes' => 'The image must be a file of type: jpg, jpeg, png, webp.',
         ]);
 
         $validated['name'] = trim($validated['name']);
