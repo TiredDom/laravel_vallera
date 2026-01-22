@@ -129,7 +129,6 @@ const categoryOptions = [
     'Beds',
     'Storage',
     'Desks',
-    'Lighting',
 ];
 
 const page = usePage();
