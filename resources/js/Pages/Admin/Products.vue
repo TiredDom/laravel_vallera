@@ -17,19 +17,25 @@
                             <p class="mt-1 text-sm sm:text-base text-slate-600">Manage your furniture catalog</p>
                         </div>
                     </div>
-                    <ProductFilters
-                        :search-query="searchQuery"
-                        :category-filter="categoryFilter"
-                        :sort-by="sortBy"
-                        :categories="categoryOptions"
-                        :sort-options="sortOptions"
-                        :is-refreshing="isRefreshing"
-                        @update:searchQuery="updateSearchQuery"
-                        @update:categoryFilter="updateCategoryFilter"
-                        @update:sortBy="updateSortBy"
-                        @refresh="refreshProducts"
-                        @add="openAddModal"
-                    />
+                    <div class="flex items-center gap-2 mt-2 sm:mt-0">
+                        <button
+                            @click="refreshProducts"
+                            :disabled="isRefreshing"
+                            class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-semibold transition-all flex items-center gap-2 text-sm disabled:opacity-50"
+                            title="Refresh stock data"
+                        >
+                            <svg class="w-4 h-4" :class="{ 'animate-spin': isRefreshing }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            <span class="hidden sm:inline">{{ isRefreshing ? 'Refreshing...' : 'Refresh' }}</span>
+                        </button>
+                        <button @click="openAddModal" class="px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg font-semibold hover:from-emerald-700 hover:to-teal-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-sm whitespace-nowrap">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            <span>Add Product</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -39,6 +45,17 @@
                 :products="products"
                 :featured-count="featuredCount"
                 :max-featured="maxFeatured"
+            />
+
+            <ProductFilters
+                :search-query="searchQuery"
+                :category-filter="categoryFilter"
+                :sort-by="sortBy"
+                :categories="categoryOptions"
+                :sort-options="sortOptions"
+                @update:searchQuery="updateSearchQuery"
+                @update:categoryFilter="updateCategoryFilter"
+                @update:sortBy="updateSortBy"
             />
 
             <ProductList
