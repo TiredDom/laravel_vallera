@@ -130,8 +130,8 @@
                                     <h3 class="text-base sm:text-lg font-bold text-slate-900 truncate">{{ product.name }}</h3>
                                     <span v-if="product.is_featured" class="px-2 py-0.5 text-xs font-bold rounded-full bg-amber-100 text-amber-700 whitespace-nowrap">⭐ Featured</span>
                                     <span v-if="!product.is_active" class="px-2 py-0.5 text-xs font-bold rounded-full bg-red-100 text-red-700 whitespace-nowrap">Inactive</span>
-                                    <span v-if="product.stock === 0" class="px-2 py-0.5 text-xs font-bold rounded-full bg-red-600 text-white whitespace-nowrap">SOLD OUT</span>
-                                    <span v-else-if="product.stock < 10" class="px-2 py-0.5 text-xs font-bold rounded-full bg-amber-500 text-white whitespace-nowrap">LOW STOCK</span>
+                                    <span v-if="product.quantity === 0" class="px-2 py-0.5 text-xs font-bold rounded-full bg-red-600 text-white whitespace-nowrap">SOLD OUT</span>
+                                    <span v-else-if="product.quantity < 10" class="px-2 py-0.5 text-xs font-bold rounded-full bg-amber-500 text-white whitespace-nowrap">LOW STOCK</span>
                                 </div>
                                 <p class="text-xs sm:text-sm text-slate-600 mb-2 line-clamp-2">{{ product.description || 'No description' }}</p>
                                 <div class="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm">
@@ -141,15 +141,15 @@
                                         <span
                                             class="px-2 py-0.5 rounded-md font-bold"
                                             :class="{
-                                                'bg-red-100 text-red-700': product.stock === 0,
-                                                'bg-amber-100 text-amber-700': product.stock > 0 && product.stock < 10,
-                                                'bg-emerald-100 text-emerald-700': product.stock >= 10
+                                                'bg-red-100 text-red-700': product.quantity === 0,
+                                                'bg-amber-100 text-amber-700': product.quantity > 0 && product.quantity < 10,
+                                                'bg-emerald-100 text-emerald-700': product.quantity >= 10
                                             }"
                                         >
-                                            {{ product.stock }}
+                                            {{ product.quantity }}
                                         </span>
                                     </div>
-                                    <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-slate-100 text-slate-700 whitespace-nowrap">{{ product.category }}</span>
+                                    <span class="px-2 py-0.5 rounded-md text-xs font-semibold bg-slate-100 text-slate-700 whitespace-nowrap">{{ product.category_name }}</span>
                                 </div>
                             </div>
                         </div>
@@ -428,10 +428,10 @@ const editForm = useForm({
     is_active: true,
 });
 
-const totalStock = computed(() => props.products.reduce((sum, p) => sum + p.stock, 0));
-const categories = computed(() => [...new Set(props.products.map(p => p.category))]);
-const lowStockCount = computed(() => props.products.filter(p => p.stock > 0 && p.stock < 10).length);
-const outOfStockCount = computed(() => props.products.filter(p => p.stock === 0).length);
+const totalStock = computed(() => props.products.reduce((sum, p) => sum + p.quantity, 0));
+const categories = computed(() => [...new Set(props.products.map(p => p.category_name))]);
+const lowStockCount = computed(() => props.products.filter(p => p.quantity > 0 && p.quantity < 10).length);
+const outOfStockCount = computed(() => props.products.filter(p => p.quantity === 0).length);
 
 watch(() => page.props.flash?.success, (message) => {
     if (message) toast.value = { show: true, message, type: 'success' };
@@ -463,8 +463,8 @@ function openEditModal(product) {
     editForm.name = product.name;
     editForm.description = product.description;
     editForm.price = product.price;
-    editForm.stock = product.stock;
-    editForm.category = product.category;
+    editForm.stock = product.quantity;
+    editForm.category = product.category_name;
     editForm.is_featured = product.is_featured;
     editForm.is_active = product.is_active;
     editImagePreview.value = product.image_url;
@@ -535,7 +535,7 @@ function submitEditProduct() {
             editImagePreview.value = null;
             toast.value = { show: true, message: 'Product updated successfully', type: 'success' };
         },
-        onError: (errors) => {
+        onError: (errors).
             const firstError = Object.values(errors)[0];
             toast.value = { show: true, message: firstError || 'Failed to update product', type: 'error' };
         },
