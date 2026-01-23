@@ -15,7 +15,7 @@
                                 </svg>
                             </div>
                         </div>
-                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-4 gap-4">
+                        <div class="mt-4 w-full flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
 
                             <div>
                                 <div class="flex justify-between">
