@@ -15,14 +15,23 @@ use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\AuditLogController;
+use Illuminate\Support\Facades\DB;
 
 // Emergency Migration Route
 Route::get('/migrate-emergency', function () {
     try {
-        \Illuminate\Support\Facades\Artisan::call('migrate:fresh --seed --force');
-        return 'Migration and Seeding Completed Successfully!';
+        // Test Connection
+        DB::connection()->getPdo();
+
+        // Run Migration
+        \Illuminate\Support\Facades\Artisan::call('migrate:fresh', [
+            '--seed' => true,
+            '--force' => true
+        ]);
+
+        return 'Migration and Seeding Completed Successfully! Output: ' . \Illuminate\Support\Facades\Artisan::output();
     } catch (\Exception $e) {
-        return 'Error: ' . $e->getMessage();
+        return 'Error: ' . $e->getMessage() . ' Trace: ' . $e->getTraceAsString();
     }
 });
 
