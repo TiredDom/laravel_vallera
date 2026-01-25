@@ -16,6 +16,16 @@ use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\AuditLogController;
 
+// Emergency Migration Route
+Route::get('/migrate-emergency', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate:fresh --seed --force');
+        return 'Migration and Seeding Completed Successfully!';
+    } catch (\Exception $e) {
+        return 'Error: ' . $e->getMessage();
+    }
+});
+
 // Use the new HomeController for the landing page
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
